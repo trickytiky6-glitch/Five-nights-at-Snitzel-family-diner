@@ -41,22 +41,24 @@
             transition:transform 0.08s linear;
         }
 
-        /* Floor — worn linoleum tiles */
+        /* Floor — worn tile with depth */
         .office-floor{
             position:absolute;
             bottom:0; left:0;
             width:100%; height:38%;
             background:
-                repeating-linear-gradient(90deg, transparent 0px, transparent 59px, rgba(0,0,0,0.3) 59px, rgba(0,0,0,0.3) 60px),
-                repeating-linear-gradient(0deg, transparent 0px, transparent 59px, rgba(0,0,0,0.3) 59px, rgba(0,0,0,0.3) 60px),
-                linear-gradient(180deg, #2a1f14 0%, #1a1208 100%);
+                repeating-linear-gradient(90deg, transparent 0px, transparent 58px, rgba(0,0,0,0.35) 58px, rgba(0,0,0,0.35) 60px),
+                repeating-linear-gradient(0deg, transparent 0px, transparent 58px, rgba(0,0,0,0.35) 58px, rgba(0,0,0,0.35) 60px),
+                linear-gradient(180deg, #251a0e 0%, #180f06 60%, #0f0804 100%);
             z-index:0;
         }
         .office-floor::after{
             content:'';
             position:absolute;
             inset:0;
-            background:linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 60%);
+            background:
+                linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 50%, transparent 100%),
+                radial-gradient(ellipse 120% 40% at 50% 0%, rgba(255,180,60,0.04) 0%, transparent 60%);
         }
 
         /* Back wall — stained panels */
@@ -65,52 +67,63 @@
             width:100%; height:100%;
             background:
                 linear-gradient(180deg,
-                    #0d0d0d 0%,
-                    #161210 18%,
-                    #1c1712 35%,
-                    #201a14 55%,
-                    #1a140e 100%);
+                    #080808 0%,
+                    #111009 15%,
+                    #1a1410 30%,
+                    #1e1812 50%,
+                    #161009 75%,
+                    #0a0806 100%);
             z-index:1;
         }
-        /* Vertical wall panels */
+        /* Vertical wall panels with subtle variation */
         .office-wall::before{
             content:'';
             position:absolute;
             inset:0;
             background:
                 repeating-linear-gradient(90deg,
-                    transparent 0px, transparent 119px,
-                    rgba(0,0,0,0.4) 119px, rgba(0,0,0,0.4) 121px,
-                    transparent 121px, transparent 240px
+                    rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px,
+                    transparent 1px, transparent 60px,
+                    rgba(0,0,0,0.25) 60px, rgba(0,0,0,0.25) 62px,
+                    transparent 62px, transparent 120px
+                ),
+                repeating-linear-gradient(180deg,
+                    transparent 0px, transparent 80px,
+                    rgba(0,0,0,0.08) 80px, rgba(0,0,0,0.08) 81px
                 );
         }
-        /* Horizontal baseboard/crown lines */
+        /* Depth gradient + baseboard glow */
         .office-wall::after{
             content:'';
             position:absolute;
             inset:0;
             background:
-                linear-gradient(180deg, rgba(80,60,30,0.15) 0%, transparent 8%),
-                linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.5) 100%);
-            box-shadow: inset 0 -4px 0 rgba(100,70,30,0.2), inset 0 4px 0 rgba(50,35,15,0.3);
+                radial-gradient(ellipse 80% 60% at 50% 40%, rgba(60,40,20,0.12) 0%, transparent 70%),
+                linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 12%, transparent 75%, rgba(0,0,0,0.7) 100%);
         }
 
-        /* Ceiling — dark with grime */
+        /* Ceiling — dark, grimy tiles */
         .office-ceiling{
             position:absolute;
             top:0; left:0;
-            width:100%; height:22%;
-            background:linear-gradient(180deg, #050505 0%, #0f0c09 70%, transparent 100%);
+            width:100%; height:24%;
+            background:
+                repeating-linear-gradient(90deg,
+                    transparent 0px, transparent 78px,
+                    rgba(0,0,0,0.4) 78px, rgba(0,0,0,0.4) 80px
+                ),
+                repeating-linear-gradient(0deg,
+                    transparent 0px, transparent 28px,
+                    rgba(0,0,0,0.3) 28px, rgba(0,0,0,0.3) 30px
+                ),
+                linear-gradient(180deg, #030303 0%, #0c0a07 60%, #121009 100%);
             z-index:2;
         }
         .office-ceiling::before{
             content:'';
             position:absolute;
             inset:0;
-            background:repeating-linear-gradient(90deg,
-                transparent 0px, transparent 79px,
-                rgba(0,0,0,0.3) 79px, rgba(0,0,0,0.3) 81px
-            );
+            background:linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
         }
 
         /* Ceiling light fixture — flickering */
@@ -127,10 +140,13 @@
         .ceiling-light::after{
             content:'';
             position:absolute;
-            bottom:-6px; left:10px; right:10px; height:6px;
-            background:#ffe8b0;
-            border-radius:0 0 3px 3px;
-            box-shadow:0 0 40px 20px rgba(255,220,120,0.12), 0 0 120px 60px rgba(255,200,80,0.06);
+            bottom:-6px; left:6px; right:6px; height:7px;
+            background:#ffe8a0;
+            border-radius:0 0 4px 4px;
+            box-shadow:
+                0 0 30px 15px rgba(255,220,100,0.18),
+                0 0 100px 50px rgba(255,190,60,0.09),
+                0 0 200px 100px rgba(255,160,40,0.04);
             animation:lightFlicker 8s infinite;
         }
         @keyframes lightFlicker{
@@ -187,27 +203,33 @@
         }
         @keyframes camBlink{0%,49%{opacity:1}50%,100%{opacity:0.2}}
 
-        /* Desk — more detailed */
+        /* Desk — rich wood */
         .desk{
             position:absolute;
             bottom:-50px; left:10%; width:80%; height:40%;
             z-index:10;
             background:
-                linear-gradient(180deg, #3a2c1e 0%, #2a1e10 30%, #1a1008 100%);
-            border-top:8px solid #4a3828;
+                repeating-linear-gradient(
+                    180deg,
+                    transparent 0px, transparent 14px,
+                    rgba(0,0,0,0.08) 14px, rgba(0,0,0,0.08) 15px
+                ),
+                linear-gradient(180deg, #40301e 0%, #2e1e0c 20%, #1c1008 100%);
+            border-top:6px solid #5a4030;
             box-shadow:
-                0 -8px 30px rgba(0,0,0,0.9),
-                inset 0 2px 0 rgba(100,70,40,0.3),
-                0 -30px 60px rgba(0,0,0,0.6);
+                0 -12px 40px rgba(0,0,0,0.95),
+                0 -4px 0 rgba(80,50,20,0.4),
+                inset 0 3px 0 rgba(120,80,40,0.35),
+                0 -40px 80px rgba(0,0,0,0.5);
         }
         /* Desk surface wear lines */
         .desk::before{
             content:'';
             position:absolute;
-            top:0; left:5%; right:5%; height:8px;
+            top:0; left:5%; right:5%; height:6px;
             background:repeating-linear-gradient(90deg,
-                transparent 0, transparent 30px,
-                rgba(0,0,0,0.2) 30px, rgba(0,0,0,0.2) 31px
+                transparent 0, transparent 40px,
+                rgba(0,0,0,0.15) 40px, rgba(0,0,0,0.15) 41px
             );
         }
         /* Monitor on desk */
@@ -295,8 +317,14 @@
             content:'';
             position:absolute;
             inset:0;
-            background:linear-gradient(180deg, #080808 0%, #020202 100%);
-            box-shadow:inset 0 0 30px rgba(0,0,0,0.95), inset 4px 0 8px rgba(0,0,0,0.8), inset -4px 0 8px rgba(0,0,0,0.8);
+            background:
+                radial-gradient(ellipse 80% 100% at 50% 100%, rgba(30,15,5,0.3) 0%, transparent 60%),
+                linear-gradient(180deg, #050505 0%, #010101 100%);
+            box-shadow:
+                inset 0 0 40px rgba(0,0,0,1),
+                inset 6px 0 12px rgba(0,0,0,0.9),
+                inset -6px 0 12px rgba(0,0,0,0.9),
+                inset 0 -8px 16px rgba(0,0,0,0.8);
         }
 
         .door{position:absolute;top:-100%;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,#3a3a3a,#3a3a3a 10px,#1e1e1e 10px,#1e1e1e 20px);border-bottom:5px solid #555;transition:top .3s ease-in-out;z-index:3}
@@ -592,6 +620,65 @@
             z-index:12;
         }
         @keyframes powerPulse{0%,100%{opacity:1;box-shadow:0 0 6px 2px rgba(0,255,0,0.4)}50%{opacity:0.5;box-shadow:0 0 3px 1px rgba(0,255,0,0.2)}}
+
+        /* ── SMOOTH GLOBAL TRANSITIONS ── */
+        .door { transition: top 0.35s cubic-bezier(0.4,0,0.2,1) !important; }
+        #monitor { transition: top 0.35s cubic-bezier(0.4,0,0.2,1) !important; }
+        #blackout-overlay { transition: opacity 0.6s ease; }
+        .hall-light { transition: opacity 0.18s ease !important; }
+        #hud .hud-text { transition: color 0.3s ease; }
+        #puppet-bar-fill { transition: width 0.4s ease, background 0.4s ease !important; }
+
+        /* ── SMOOTH CAMERA SWITCH static flash ── */
+        #cam-static { transition: opacity 0.08s ease; }
+
+        /* ── OFFICE EXTRAS ── */
+        
+         }
+         }
+
+        
+
+        
+
+        
+
+        
+
+        /* Smooth minigame screen fade */
+        #minigame-screen {
+            animation: mgFadeIn 0.4s ease;
+        }
+        @keyframes mgFadeIn { from{opacity:0;transform:scale(0.97)} to{opacity:1;transform:scale(1)} }
+
+        /* Smooth HUD power bar color */
+        #power-display { transition: color 0.5s ease; }
+
+        /* Smooth cam toggle hover */
+        #cam-toggle-container {
+            transition: background 0.2s ease, box-shadow 0.2s ease !important;
+            box-shadow: 0 0 0 rgba(255,255,255,0);
+        }
+        #cam-toggle-container:hover {
+            box-shadow: 0 0 20px rgba(255,255,255,0.15);
+        }
+
+        /* Button press feel */
+        .btn { transition: transform 0.08s ease, box-shadow 0.08s ease !important; }
+        .btn:active { transform: scale(0.92); }
+        .btn-door.active { box-shadow: 0 0 14px #f00, inset 0 0 5px rgba(0,0,0,0.8) !important; }
+        .btn-light.active { box-shadow: 0 0 14px #fff, inset 0 0 5px rgba(0,0,0,0.3) !important; }
+
+        /* CAM button smooth */
+        .cam-btn { transition: background 0.15s ease, color 0.15s ease !important; }
+
+        /* Night screen fade */
+        #night-screen {
+            background: #000;
+            animation: nightFade 0.5s ease;
+        }
+        @keyframes nightFade { from{opacity:0} to{opacity:1} }
+
     </style>
 </head>
 <body>
@@ -624,6 +711,13 @@
 
             <!-- Decorative details -->
             <div class="sec-camera"></div>
+            <!-- Poster pinned on wall -->
+            <div style="position:absolute;top:22%;left:42%;width:120px;z-index:3;pointer-events:none">
+                <div style="width:8px;height:8px;background:#aaa;border-radius:50%;position:absolute;top:-4px;left:50%;transform:translateX(-50%);box-shadow:0 0 3px rgba(0,0,0,0.8);z-index:4"></div>
+                <img src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Schintzel-family-burger-diner/main/%D0%91%D0%B5%D0%B7%20%D0%B8%D0%BC%D0%B5%D0%BD%D0%B8.png"
+                     style="width:100%;display:block;box-shadow:3px 3px 10px rgba(0,0,0,0.8);border:2px solid #555;transform:rotate(-1deg)"
+                     onerror="this.style.display='none'" alt="poster">
+            </div>
             <div class="wall-stain" style="width:120px;height:80px;top:45%;left:35%"></div>
             <div class="wall-stain" style="width:80px;height:60px;top:30%;right:30%"></div>
 
@@ -661,7 +755,7 @@
         <!-- Dust particles canvas (outside parallax so it covers full screen) -->
         <canvas id="dust-canvas"></canvas>
 
-        <div id="sprint-warning">FOOTSTEPS APPROACHING!</div>
+        <div id="sprint-warning" style="display:none !important"></div>
 
         <div id="hud">
             <div class="hud-text" id="power-display">Power left: 100%</div>
@@ -676,7 +770,7 @@
             </div>
         </div>
 
-        <div id="time-display"><div id="hour-text">12 AM</div><div id="real-timer" style="font-size:1rem;color:#666;margin-top:5px">Next hour in: 90s</div></div>
+        <div id="time-display"><div id="hour-text">12 AM</div><div id="real-timer" style="display:none"></div></div>
 
         <div id="cam-toggle-container" onclick="toggleMonitor()">HOVER/CLICK TO USE MONITOR</div>
 
@@ -1016,10 +1110,10 @@ function skipPhone(){
     phonePlaying = false;
     if (skipPhoneBtn) skipPhoneBtn.style.display = 'none';
 }
-function showSkipPhoneButton(){}
+function showSkipPhoneButton(){ if(skipPhoneBtn){ skipPhoneBtn.style.display="block"; } }
 function hideSkipPhoneButton(){ if (skipPhoneBtn) skipPhoneBtn.style.display = 'none'; }
 if (skipPhoneBtn){
-    skipPhoneBtn.addEventListener('click',(e)=>{ e.stopPropagation(); });
+    skipPhoneBtn.addEventListener('click',(e)=>{ e.stopPropagation(); skipPhone(); });
 }
 function attachPhoneEndHandlers(aud){
     if (!aud) return;
@@ -1056,7 +1150,9 @@ if (elHelper){
         helper.clicks++;
         try { helperSound1.currentTime = 0; helperSound1.play().catch(()=>{}); }catch(e){}
         power = Math.min(100, power + 5);
-        elPower.innerText = `Power left: ${Math.max(0,Math.floor(power))}%`;
+        const pPct = Math.max(0,Math.floor(power));
+        elPower.innerText = `Power left: ${pPct}%`;
+        elPower.style.color = pPct > 50 ? '#0f0' : pPct > 25 ? '#ff0' : '#f44';
         helper.appearancesLeft = Math.max(0, helper.appearancesLeft - 1);
         helper.visible = false;
         const prevCam = helper.cam;
@@ -1295,10 +1391,18 @@ function initShift(){
     isGameRunning=true; isBlackout=false; power=100; hour=0; secondsPassed=0;
     goldenSpawnedThisNight = false;
 
+    // Apply hour skip bonus if player won minigame from previous night
+    if (localStorage.getItem('mg_skip_night_' + (currentNight - 1)) === '1'){
+        hour = 1; // skip to 1 AM
+        elHour.innerText = "1 AM";
+        ai.active = true;
+        localStorage.removeItem('mg_skip_night_' + (currentNight - 1)); // use once
+    }
+
     ai = {
         active:false, location:'cam1', lastLocation:'cam1', patience:100,
         creepProgress:0, state:'idle', attackTimer:0, doorWaitTimer:0, cooldownTimer:0,
-        justMoved:false, moveAnimStep:0, attackCount:0, maxAttacks:0
+        justMoved:false, moveAnimStep:0, attackCount:0, maxAttacks: Math.max(1, currentNight * 2)
     };
 
     leftTeleporterStarted = false;
@@ -1397,7 +1501,9 @@ function gameLoop(){
         if (doors.left && doors.right) drain = 1.0;
         power -= drain;
         if (power <= 0){ power = 0; triggerBlackout(); }
-        elPower.innerText = `Power left: ${Math.max(0,Math.floor(power))}%`;
+        const pPct = Math.max(0,Math.floor(power));
+        elPower.innerText = `Power left: ${pPct}%`;
+        elPower.style.color = pPct > 50 ? '#0f0' : pPct > 25 ? '#ff0' : '#f44';
     }
 
     if (ai.state === 'at_right_door'){
@@ -1408,21 +1514,10 @@ function gameLoop(){
         }
     }
 
-    if (ai.state === 'attacking'){
-        ai.attackTimer--;
-        if (ai.attackTimer <= 0){
-            elSprintWarning.style.display='none';
-            if (doors.left){ blockAnimatronic('left'); }
-            else {
-                ai.state = 'in_office';
-                if (!isCamUp) triggerJumpscare();
-            }
-        }
-    } else if (ai.state === 'cooldown'){
+    if (ai.state === 'cooldown'){
         ai.cooldownTimer--;
         if (ai.cooldownTimer <= 0){
-            if (ai.attackCount < ai.maxAttacks) triggerAttack();
-            else ai.state = 'idle';
+            ai.state = 'idle';
         }
     }
 
@@ -1529,7 +1624,7 @@ function switchCam(camId,name){
 }
 
 function aiLoop(){
-    if (!isGameRunning || isBlackout || !ai.active || ai.state==='in_office' || ai.state==='attacking' || ai.state==='cooldown') {
+    if (!isGameRunning || isBlackout || !ai.active || ai.state==='in_office' || ai.state==='cooldown') {
     } else {
         const isWatched = isCamUp && activeCam === ai.location;
         if (ai.state === 'idle'){
@@ -1542,7 +1637,7 @@ function aiLoop(){
                 updateCreepLocation();
             }
             if (ai.patience <= 0){
-                if (ai.attackCount < ai.maxAttacks) triggerAttack();
+                ai.patience = 0; // just keep patience floored, no attack system
             }
         }
         updateCameraView();
@@ -1600,17 +1695,7 @@ function updateCreepLocation(){
     }
 }
 
-function triggerAttack(){
-    if (ai.attackCount >= ai.maxAttacks) return;
-    ai.attackCount++;
-    const isFast = Math.random() < 0.25;
-    ai.state = 'attacking';
-    ai.location = 'cam3';
-    ai.attackTimer = isFast ? 2 : 5;
-    if (!isCamUp) elSprintWarning.style.display = 'block';
-    playSound(100,'square',0.5);
-    updateCameraView();
-}
+// triggerAttack removed
 
 function blockAnimatronic(side){
     playSound(50,'sawtooth',1.0);
@@ -1674,7 +1759,7 @@ function handlePhantomCloseWhileViewing(){
     updatePhantomView();
 }
 
-function clearAnimClasses(el){ el.classList.remove('anim-slide-down','anim-slide-right','anim-slide-left','anim-slide-out','sprint-pos'); }
+function clearAnimClasses(el){ el.classList.remove('anim-slide-down','anim-slide-right','anim-slide-left','anim-slide-out'); }
 
 function updateHelperView(){
     if (!elHelper) return;
@@ -1719,7 +1804,6 @@ function updateCameraView(){
         else if (activeCam === 'cam4') elMonsterCam.classList.add('cam4-pos');
         else if (activeCam === 'cam5') elMonsterCam.classList.add('cam5-pos');
         else if (activeCam === 'cam6') elMonsterCam.classList.add('cam6-pos');
-        else if (activeCam === 'cam3' && ai.state === 'attacking') elMonsterCam.classList.add('sprint-pos');
         elMonsterCam.style.opacity='0.95';
         if (ai.justMoved || ai.state === 'attacking'){
             elMonsterCam.style.backgroundImage = (ai.moveAnimStep === 0) ? `url('${SPRITE_STANDING}')` : `url('${SPRITE_MOVING}')`;
@@ -1849,7 +1933,7 @@ function triggerBlackout(){
         setTimeout(()=>{
             if (elBlackoutVideo){
                 elBlackoutVideo.style.display = 'block';
-                try { elBlackoutVideo.currentTime = 0; elBlackoutVideo.volume = 1.0; elBlackoutVideo.playbackRate = 0.75; }catch(e){}
+                try { elBlackoutVideo.currentTime = 0; elBlackoutVideo.volume = 1.0; elBlackoutVideo.playbackRate = 2.0; }catch(e){}
                 const p = elBlackoutVideo.play && elBlackoutVideo.play();
                 if (p && typeof p.then === 'function'){
                     p.then(()=>{ elBlackoutVideo.onended = ()=>{ elBlackoutVideo.style.display = 'none'; }; })
@@ -2020,12 +2104,23 @@ function winGame(){
     }
 
     document.getElementById('game-screen').style.display='none';
+
+    // After nights 1, 2, or 3 — show minigame
+    if (!wasCustom && currentNight >= 2 && currentNight <= 4){
+        // currentNight was already incremented above (e.g. beat night 1 → currentNight=2)
+        const afterNight = currentNight - 1;
+        if (afterNight <= 3){
+            showMiniGame(afterNight, currentNight);
+            return;
+        }
+    }
+
     const winScreen = document.getElementById('win-screen');
     winScreen.style.display='flex';
 
     // Show night label
     const label = document.getElementById('win-night-label');
-    if (label) label.innerText = wasCustom ? 'CUSTOM NIGHT COMPLETE!' : `NIGHT ${wasCustom ? 'CUSTOM' : currentNight - (currentNight>1?1:0)} COMPLETE`;
+    if (label) label.innerText = wasCustom ? 'CUSTOM NIGHT COMPLETE!' : `NIGHT ${currentNight - (currentNight>1?1:0)} COMPLETE`;
 
     // Show custom night button only after all 5 nights done
     const savedNight = parseInt(localStorage.getItem('fnaf_night')) || 1;
@@ -2124,5 +2219,249 @@ updateWindUI();
   }
 })();
 </script>
+
+    <!-- ===== MINI-GAME SCREEN ===== -->
+    <div id="minigame-screen" style="display:none;position:fixed;inset:0;background:#000;z-index:500000;flex-direction:column;align-items:center;justify-content:center">
+        <div id="mg-title" style="font-size:1.2rem;color:#ff0;margin-bottom:10px"></div>
+        <div id="mg-desc" style="font-size:0.6rem;color:#aaa;margin-bottom:14px;text-align:center;max-width:420px;line-height:1.8"></div>
+        <div id="mg-hud" style="font-size:0.7rem;color:#0f0;margin-bottom:8px"></div>
+        <canvas id="mg-canvas" width="300" height="300" style="border:3px solid #fff;display:block;image-rendering:pixelated;background:#111"></canvas>
+        <div id="mg-result" style="font-size:0.8rem;margin-top:12px;color:#fff;min-height:1.5em;text-align:center"></div>
+        <button id="mg-close-btn" class="menu-btn" style="display:none;margin-top:14px;font-size:0.7rem" onclick="closeMiniGame()">BACK TO MENU</button>
+    </div>
+
+<script>
+/* ===== MINI-GAME SYSTEM ===== */
+
+let mgActive = false;
+let mgType = null;        // 'snake' | 'tetris' | 'memory'
+let mgWon = false;        // did player win this minigame?
+let mgPendingNight = 0;   // which night to start after closing
+let mgSkipHour = false;   // whether to skip first hour next night
+// Per-night skip flags (persist via localStorage)
+function getMgSkip(night){ return localStorage.getItem('mg_skip_' + night) === '1'; }
+function setMgSkip(night, val){ localStorage.setItem('mg_skip_' + night, val ? '1' : '0'); }
+
+// Called from winGame after night 1, 2, or 3
+function showMiniGame(afterNight, nextNight){
+    mgActive = true;
+    mgWon = false;
+    mgPendingNight = nextNight;
+    mgType = afterNight === 1 ? 'snake' : afterNight === 2 ? 'tetris' : 'memory';
+
+    const screen = document.getElementById('minigame-screen');
+    screen.style.display = 'flex';
+    document.getElementById('mg-result').innerText = '';
+    document.getElementById('mg-close-btn').style.display = 'none';
+
+    if (mgType === 'snake') startSnake();
+    else if (mgType === 'tetris') startTetris();
+    else startMemory();
+}
+
+function closeMiniGame(){
+    mgActive = false;
+    document.getElementById('minigame-screen').style.display = 'none';
+    if (mgWon) localStorage.setItem('mg_skip_night_' + (mgPendingNight - 1), '1');
+    // Save night progress then return to main menu
+    currentNight = mgPendingNight;
+    localStorage.setItem('fnaf_night', currentNight);
+    document.getElementById('win-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'none';
+    // Show main menu with updated continue button
+    const contBtn = document.getElementById('continue-btn');
+    if (contBtn){ contBtn.style.display = 'block'; contBtn.innerText = 'CONTINUE SHIFT (NIGHT ' + currentNight + ')'; }
+    document.getElementById('main-menu').style.display = 'flex';
+    try { const m = document.getElementById('menu-music'); m.currentTime=0; m.volume=0.8; m.play().catch(()=>{}); } catch(e){}
+}
+
+function mgEndGame(won, msg){
+    mgWon = won;
+    // stop any running loops
+    if (window._mgLoopId){ clearInterval(window._mgLoopId); window._mgLoopId = null; }
+    if (window._mgTimerId){ clearInterval(window._mgTimerId); window._mgTimerId = null; }
+    document.getElementById('mg-result').innerText = (won ? '✓ ' : '✗ ') + msg;
+    document.getElementById('mg-result').style.color = won ? '#0f0' : '#f44';
+    document.getElementById('mg-close-btn').style.display = 'block';
+}
+
+/* ========== SNAKE ========== */
+function startSnake(){
+    document.getElementById('mg-title').innerText = 'SNAKE — NIGHT 1 BONUS';
+    document.getElementById('mg-desc').innerText = 'Eat 10 apples in 30 seconds to skip the first hour next night!';
+    const canvas = document.getElementById('mg-canvas');
+    canvas.width = 300; canvas.height = 300;
+    const ctx = canvas.getContext('2d');
+    const CELL = 15, COLS = 20, ROWS = 20;
+    let snake = [{x:10,y:10}];
+    let dir = {x:1,y:0}, nextDir = {x:1,y:0};
+    let apple = randomApple();
+    let applesEaten = 0;
+    let timeLeft = 30;
+    let dead = false;
+
+    function randomApple(){
+        let a;
+        do { a = {x:Math.floor(Math.random()*COLS), y:Math.floor(Math.random()*ROWS)}; }
+        while (snake.some(s=>s.x===a.x&&s.y===a.y));
+        return a;
+    }
+
+    document.getElementById('mg-hud').innerText = 'Apples: 0/10  Time: 30s';
+
+    // Timer
+    window._mgTimerId = setInterval(()=>{
+        if (dead) return;
+        timeLeft--;
+        document.getElementById('mg-hud').innerText = `Apples: ${applesEaten}/10  Time: ${timeLeft}s`;
+        if (timeLeft <= 0 && !dead){ dead=true; clearInterval(window._mgTimerId); clearInterval(window._mgLoopId); mgEndGame(false, 'Time up! No hour skip.'); }
+    }, 1000);
+
+    // Controls
+    function onKey(e){
+        if (e.key==='ArrowUp'&&dir.y!==1) nextDir={x:0,y:-1};
+        else if (e.key==='ArrowDown'&&dir.y!==-1) nextDir={x:0,y:1};
+        else if (e.key==='ArrowLeft'&&dir.x!==1) nextDir={x:-1,y:0};
+        else if (e.key==='ArrowRight'&&dir.x!==-1) nextDir={x:1,y:0};
+    }
+    document.addEventListener('keydown', onKey);
+
+    window._mgLoopId = setInterval(()=>{
+        if (dead) return;
+        dir = nextDir;
+        const head = {x:(snake[0].x+dir.x+COLS)%COLS, y:(snake[0].y+dir.y+ROWS)%ROWS};
+        if (snake.some(s=>s.x===head.x&&s.y===head.y)){ dead=true; clearInterval(window._mgLoopId); clearInterval(window._mgTimerId); document.removeEventListener('keydown',onKey); mgEndGame(false,'You died! No hour skip.'); return; }
+        snake.unshift(head);
+        if (head.x===apple.x&&head.y===apple.y){ applesEaten++; document.getElementById('mg-hud').innerText=`Apples: ${applesEaten}/10  Time: ${timeLeft}s`; if(applesEaten>=10){ dead=true; clearInterval(window._mgLoopId); clearInterval(window._mgTimerId); document.removeEventListener('keydown',onKey); mgEndGame(true,'You got 10 apples! First hour skipped next night!'); return; } apple=randomApple(); } else { snake.pop(); }
+        // Draw
+        ctx.fillStyle='#111'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        // grid
+        ctx.strokeStyle='rgba(255,255,255,0.05)';
+        for(let x=0;x<COLS;x++){ ctx.beginPath();ctx.moveTo(x*CELL,0);ctx.lineTo(x*CELL,canvas.height);ctx.stroke(); }
+        for(let y=0;y<ROWS;y++){ ctx.beginPath();ctx.moveTo(0,y*CELL);ctx.lineTo(canvas.width,y*CELL);ctx.stroke(); }
+        // snake
+        snake.forEach((s,i)=>{ ctx.fillStyle=i===0?'#0f0':'#080'; ctx.fillRect(s.x*CELL+1,s.y*CELL+1,CELL-2,CELL-2); });
+        // apple
+        ctx.fillStyle='#f00'; ctx.beginPath(); ctx.arc(apple.x*CELL+CELL/2,apple.y*CELL+CELL/2,CELL/2-1,0,Math.PI*2); ctx.fill();
+    }, 120);
+}
+
+/* ========== TETRIS ========== */
+function startTetris(){
+    document.getElementById('mg-title').innerText = 'TETRIS — NIGHT 2 BONUS';
+    document.getElementById('mg-desc').innerText = 'Score 400 points to skip the first hour next night!';
+    const TARGET = 400;
+    const canvas = document.getElementById('mg-canvas');
+    canvas.width = 200; canvas.height = 400;
+    const ctx = canvas.getContext('2d');
+    const COLS=10,ROWS=20,CS=20;
+    const COLORS=['#0ff','#00f','#f90','#ff0','#0f0','#f0f','#f00'];
+    const SHAPES=[
+        [[1,1,1,1]],
+        [[1,0,0],[1,1,1]],
+        [[0,0,1],[1,1,1]],
+        [[1,1],[1,1]],
+        [[0,1,1],[1,1,0]],
+        [[0,1,0],[1,1,1]],
+        [[1,1,0],[0,1,1]]
+    ];
+    let board=Array.from({length:ROWS},()=>Array(COLS).fill(0));
+    let score=0, dead=false;
+
+    function randPiece(){ const s=Math.floor(Math.random()*SHAPES.length); return {shape:SHAPES[s],color:COLORS[s],x:3,y:0}; }
+    let cur=randPiece(), next=randPiece();
+
+    function valid(p,ox=0,oy=0,s=p.shape){ return s.every((r,ri)=>r.every((c,ci)=>!c||(p.x+ci+ox>=0&&p.x+ci+ox<COLS&&p.y+ri+oy<ROWS&&!board[p.y+ri+oy]?.[p.x+ci+ox]))); }
+    function place(p){ p.shape.forEach((r,ri)=>r.forEach((c,ci)=>{ if(c&&board[p.y+ri]&&p.x+ci<COLS) board[p.y+ri][p.x+ci]=p.color; })); }
+    function clearLines(){ let cleared=0; board=board.filter(r=>{ if(r.every(c=>c)){cleared++;return false;} return true; }); while(board.length<ROWS) board.unshift(Array(COLS).fill(0)); score+=cleared*100; }
+    function rotate(s){ return s[0].map((_,i)=>s.map(r=>r[i])).reverse(); }
+
+    document.getElementById('mg-hud').innerText = `Score: 0 / ${TARGET}`;
+
+    function draw(){
+        ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
+        board.forEach((r,ri)=>r.forEach((c,ci)=>{ if(c){ctx.fillStyle=c;ctx.fillRect(ci*CS,ri*CS,CS-1,CS-1);} }));
+        if(cur){ ctx.fillStyle=cur.color; cur.shape.forEach((r,ri)=>r.forEach((c,ci)=>{ if(c) ctx.fillRect((cur.x+ci)*CS,(cur.y+ri)*CS,CS-1,CS-1); })); }
+        ctx.strokeStyle='rgba(255,255,255,0.06)';
+        for(let x=0;x<=COLS;x++){ctx.beginPath();ctx.moveTo(x*CS,0);ctx.lineTo(x*CS,canvas.height);ctx.stroke();}
+        for(let y=0;y<=ROWS;y++){ctx.beginPath();ctx.moveTo(0,y*CS);ctx.lineTo(canvas.width,y*CS);ctx.stroke();}
+    }
+
+    function drop(){
+        if(dead) return;
+        if(valid(cur,0,1)){ cur.y++; } else {
+            place(cur); clearLines();
+            document.getElementById('mg-hud').innerText=`Score: ${score} / ${TARGET}`;
+            if(score>=TARGET){ dead=true; clearInterval(window._mgLoopId); mgEndGame(true,`Score ${score}! First hour skipped next night!`); return; }
+            cur=next; next=randPiece();
+            if(!valid(cur)){dead=true;clearInterval(window._mgLoopId);mgEndGame(false,`Score ${score}. Need ${TARGET}. No skip.`);return;}
+        }
+        draw();
+    }
+
+    function onKey(e){
+        if(dead) return;
+        if(e.key==='ArrowLeft'&&valid(cur,-1,0)) cur.x--;
+        else if(e.key==='ArrowRight'&&valid(cur,1,0)) cur.x++;
+        else if(e.key==='ArrowDown'&&valid(cur,0,1)) cur.y++;
+        else if(e.key==='ArrowUp'){ const r=rotate(cur.shape); if(valid(cur,0,0,r)) cur.shape=r; }
+        draw();
+    }
+    document.addEventListener('keydown', onKey);
+    window._mgLoopId = setInterval(drop, 500);
+    draw();
+}
+
+/* ========== MEMORY MATCH (night 3) ========== */
+function startMemory(){
+    document.getElementById('mg-title').innerText = 'MEMORY — NIGHT 3 BONUS';
+    document.getElementById('mg-desc').innerText = 'Match all 8 pairs in 60 seconds to skip the first hour next night!';
+    const canvas = document.getElementById('mg-canvas');
+    canvas.width=300;canvas.height=300;
+    const ctx=canvas.getContext('2d');
+    const EMOJIS=['★','♦','♠','♥','☀','☁','☂','♫'];
+    let cards=[...EMOJIS,...EMOJIS].sort(()=>Math.random()-0.5).map((e,i)=>({emoji:e,x:(i%4)*72+6,y:Math.floor(i/4)*72+6,flipped:false,matched:false}));
+    let first=null,second=null,lock=false,matched=0,timeLeft=60;
+
+    document.getElementById('mg-hud').innerText=`Pairs: 0/8  Time: 60s`;
+
+    function draw(){
+        ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
+        cards.forEach(c=>{
+            if(c.matched){ ctx.fillStyle='#040'; ctx.fillRect(c.x,c.y,66,66); ctx.fillStyle='#0f0'; ctx.font='32px serif'; ctx.textAlign='center'; ctx.fillText(c.emoji,c.x+33,c.y+42); }
+            else if(c.flipped){ ctx.fillStyle='#224'; ctx.fillRect(c.x,c.y,66,66); ctx.fillStyle='#fff'; ctx.font='32px serif'; ctx.textAlign='center'; ctx.fillText(c.emoji,c.x+33,c.y+42); }
+            else { ctx.fillStyle='#333'; ctx.fillRect(c.x,c.y,66,66); ctx.strokeStyle='#555'; ctx.strokeRect(c.x,c.y,66,66); ctx.fillStyle='#888'; ctx.font='28px serif'; ctx.textAlign='center'; ctx.fillText('?',c.x+33,c.y+44); }
+        });
+    }
+
+    canvas.onclick=function(e){
+        if(lock) return;
+        const rect=canvas.getBoundingClientRect();
+        const mx=(e.clientX-rect.left)*(canvas.width/rect.width);
+        const my=(e.clientY-rect.top)*(canvas.height/rect.height);
+        const card=cards.find(c=>!c.flipped&&!c.matched&&mx>=c.x&&mx<=c.x+66&&my>=c.y&&my<=c.y+66);
+        if(!card) return;
+        card.flipped=true;
+        if(!first){first=card;}
+        else if(!second&&card!==first){
+            second=card;lock=true;
+            setTimeout(()=>{
+                if(first.emoji===second.emoji){first.matched=second.matched=true;matched++;document.getElementById('mg-hud').innerText=`Pairs: ${matched}/8  Time: ${timeLeft}s`;if(matched===8){clearInterval(window._mgTimerId);canvas.onclick=null;mgEndGame(true,'All pairs matched! First hour skipped!');}}
+                else{first.flipped=second.flipped=false;}
+                first=null;second=null;lock=false;draw();
+            },700);
+        }
+        draw();
+    };
+
+    window._mgTimerId=setInterval(()=>{
+        timeLeft--;
+        document.getElementById('mg-hud').innerText=`Pairs: ${matched}/8  Time: ${timeLeft}s`;
+        if(timeLeft<=0){clearInterval(window._mgTimerId);canvas.onclick=null;mgEndGame(false,`Time up! ${matched}/8 pairs. No skip.`);}
+    },1000);
+    draw();
+}
+</script>
+
 </body>
 </html>
