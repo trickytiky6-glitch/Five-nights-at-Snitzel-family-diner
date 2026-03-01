@@ -679,6 +679,233 @@
         }
         @keyframes nightFade { from{opacity:0} to{opacity:1} }
 
+
+        /* ════════════════════════════════════
+           3D OFFICE + SMOOTH ANIMATIONS
+           ════════════════════════════════════ */
+
+        /* ── SMOOTH TRANSITIONS (all interactive elements) ── */
+        .door                { transition: top 0.45s cubic-bezier(0.22,1,0.36,1) !important; }
+        #monitor             { transition: top 0.4s  cubic-bezier(0.22,1,0.36,1) !important; }
+        .hall-light          { transition: opacity 0.14s ease !important; }
+        #blind-spot-monster  { transition: opacity 0.12s ease !important; }
+        #newguy-door         { transition: opacity 0.15s ease; }
+        #cam-static          { transition: opacity 0.07s ease; }
+        #blackout-overlay    { transition: opacity 0.8s ease; }
+        #monster-cam-sprite  { transition: opacity 0.18s ease, left 0.18s ease !important; }
+        #left-anim-sprite    { transition: opacity 0.18s ease !important; }
+        #puppet-bar-fill     { transition: width 0.45s ease, background 0.4s ease !important; }
+        #power-display       { transition: color 0.6s ease; }
+        .cam-btn             { transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease !important; }
+        .btn                 { transition: box-shadow 0.12s ease, transform 0.09s ease !important; }
+        .btn:active          { transform: scale(0.86) !important; }
+        #cam-toggle-container{ transition: background 0.18s ease, box-shadow 0.18s ease !important; }
+        #cam-toggle-container:hover { box-shadow: 0 0 28px rgba(255,255,255,0.18); }
+        .btn-door.active     { box-shadow: 0 0 18px #f00, 0 0 36px rgba(255,0,0,0.25), inset 0 0 8px rgba(0,0,0,0.7) !important; }
+        .btn-light.active    { box-shadow: 0 0 18px #fff, 0 0 36px rgba(255,255,200,0.25), inset 0 0 4px rgba(0,0,0,0.3) !important; }
+
+        /* ── 3D WALL: converging panel lines give depth ── */
+        .office-wall {
+            background:
+                linear-gradient(180deg,
+                    #060606 0%,
+                    #0e0c08 12%,
+                    #181410 28%,
+                    #1c1810 50%,
+                    #141009 72%,
+                    #090706 100%) !important;
+        }
+        .office-wall::before {
+            background:
+                /* vertical panel grooves */
+                repeating-linear-gradient(90deg,
+                    transparent          0px, transparent         59px,
+                    rgba(0,0,0,0.5)     59px, rgba(0,0,0,0.5)    60px,
+                    rgba(255,255,255,0.02) 60px, rgba(255,255,255,0.02) 61px,
+                    transparent         61px, transparent        120px
+                ),
+                /* subtle horizontal scan lines */
+                repeating-linear-gradient(180deg,
+                    transparent 0px, transparent 79px,
+                    rgba(0,0,0,0.07) 79px, rgba(0,0,0,0.07) 80px
+                ) !important;
+        }
+        .office-wall::after {
+            background:
+                /* centre ambient lamp glow */
+                radial-gradient(ellipse 60% 55% at 50% 38%, rgba(70,50,20,0.16) 0%, transparent 65%),
+                /* top darkening */
+                linear-gradient(180deg, rgba(0,0,0,0.55) 0%, transparent 15%),
+                /* bottom darkening */
+                linear-gradient(0deg, rgba(0,0,0,0.65) 0%, transparent 20%) !important;
+        }
+
+        /* ── 3D FLOOR: perspective foreshortening ── */
+        .office-floor {
+            background:
+                repeating-linear-gradient(90deg,
+                    transparent 0px, transparent 57px,
+                    rgba(0,0,0,0.45) 57px, rgba(0,0,0,0.45) 60px),
+                repeating-linear-gradient(0deg,
+                    transparent 0px, transparent 39px,
+                    rgba(0,0,0,0.45) 39px, rgba(0,0,0,0.45) 42px),
+                linear-gradient(180deg, #1c1308 0%, #120d05 55%, #090704 100%) !important;
+        }
+        .office-floor::after {
+            background:
+                /* strong top-of-floor shadow makes it look like it's tilting away */
+                linear-gradient(180deg,
+                    rgba(0,0,0,0.96) 0%,
+                    rgba(0,0,0,0.55) 25%,
+                    rgba(0,0,0,0.18) 60%,
+                    transparent 100%),
+                /* faint warm lamp reflection */
+                radial-gradient(ellipse 70% 25% at 50% 0%,
+                    rgba(255,165,40,0.07) 0%, transparent 55%) !important;
+        }
+
+        /* ── 3D CEILING: tile grid ── */
+        .office-ceiling {
+            background:
+                repeating-linear-gradient(90deg,
+                    transparent 0px, transparent 77px,
+                    rgba(0,0,0,0.45) 77px, rgba(0,0,0,0.45) 80px),
+                repeating-linear-gradient(0deg,
+                    transparent 0px, transparent 27px,
+                    rgba(0,0,0,0.35) 27px, rgba(0,0,0,0.35) 30px),
+                linear-gradient(180deg, #020202 0%, #0b0905 60%, #111008 100%) !important;
+        }
+        /* cornice shadow */
+        .office-ceiling::after {
+            content: '';
+            position: absolute;
+            bottom: -14px; left: 0; right: 0; height: 34px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* ── BASEBOARD: physical ledge at wall/floor join ── */
+        #office-parallax::after {
+            content: '';
+            position: absolute;
+            bottom: 38%; left: 0; right: 0; height: 20px;
+            background: linear-gradient(180deg, #3c2e1c 0%, #28180c 55%, #100b06 100%);
+            border-top: 3px solid #604030;
+            box-shadow:
+                0 5px 18px rgba(0,0,0,0.95),
+                inset 0 1px 0 rgba(120,80,40,0.22);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* ── CORNER VIGNETTE: sides go darker = depth illusion ── */
+        #office-parallax::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9;
+            background:
+                linear-gradient(90deg,
+                    rgba(0,0,0,0.78) 0%,
+                    rgba(0,0,0,0.32) 7%,
+                    rgba(0,0,0,0.06) 16%,
+                    transparent 24%,
+                    transparent 76%,
+                    rgba(0,0,0,0.06) 84%,
+                    rgba(0,0,0,0.32) 93%,
+                    rgba(0,0,0,0.78) 100%
+                );
+        }
+
+        /* ── DESK: visible top-face edge + left side face ── */
+        .desk::after {
+            content: '';
+            position: absolute;
+            top: -9px; left: 0; right: 0; height: 9px;
+            background: linear-gradient(180deg, #806040 0%, #5a3c1c 60%, #3a200c 100%);
+            border-top: 2px solid #a07858;
+            box-shadow: 0 -2px 0 rgba(255,200,100,0.10);
+        }
+        /* left side face */
+        .desk::before {
+            content: '';
+            position: absolute;
+            top: -9px; left: 0; width: 14px; height: calc(100% + 9px);
+            background: linear-gradient(90deg, #281808 0%, #1c1006 100%);
+            border-right: 1px solid #402818;
+        }
+
+        /* ── DOORWAYS: deep void ── */
+        .doorway {
+            border: 12px solid #0c0c0c !important;
+            box-shadow:
+                inset 0 0 70px rgba(0,0,0,1),
+                inset 10px 0 20px rgba(0,0,0,0.95),
+                inset -10px 0 20px rgba(0,0,0,0.95),
+                inset 0 10px 24px rgba(0,0,0,0.9),
+                inset 0 -10px 24px rgba(0,0,0,0.85),
+                8px 0 36px rgba(0,0,0,0.75),
+                -8px 0 36px rgba(0,0,0,0.75) !important;
+        }
+
+        /* ── DOOR panels: raised stripe effect ── */
+        .door {
+            background:
+                repeating-linear-gradient(0deg,
+                    #404040 0px, #404040 8px,
+                    #2a2a2a 8px, #2a2a2a 9px,
+                    #4c4c4c 9px, #4c4c4c 10px,
+                    #1e1e1e 10px, #1e1e1e 20px
+                ) !important;
+            box-shadow:
+                inset 3px 0 7px rgba(255,255,255,0.05),
+                inset -3px 0 7px rgba(0,0,0,0.65) !important;
+        }
+
+        /* ── MONITOR glow ── */
+        .desk-monitor::before {
+            background: linear-gradient(150deg, #001e00 0%, #003500 45%, #001800 100%) !important;
+            box-shadow:
+                inset 0 0 50px rgba(0,255,0,0.18),
+                0 0 14px rgba(0,200,0,0.09) !important;
+        }
+
+        /* ── CONTROL PANEL: embossed 3D block ── */
+        .control-panel {
+            background: linear-gradient(180deg, #383838 0%, #242424 55%, #1a1a1a 100%) !important;
+            border: 2px solid #111 !important;
+            box-shadow:
+                3px 3px 0 #0c0c0c,
+                5px 5px 0 #080808,
+                6px 6px 12px rgba(0,0,0,0.85),
+                inset 0 1px 0 rgba(255,255,255,0.07) !important;
+        }
+
+        /* ── NIGHT / WIN screen fade-in ── */
+        #night-screen { animation: screenFadeIn 0.5s ease; }
+        #win-screen   { animation: screenFadeIn 0.5s ease; }
+        @keyframes screenFadeIn { from { opacity:0; } to { opacity:1; } }
+
+        /* ── MINI-GAME screen ── */
+        #minigame-screen { animation: mgPop 0.35s cubic-bezier(0.22,1,0.36,1); }
+        @keyframes mgPop { from { opacity:0; transform:scale(0.94); } to { opacity:1; transform:scale(1); } }
+
+        /* ── CEILING LIGHT stronger glow ── */
+        .ceiling-light::after {
+            box-shadow:
+                0 0 40px 20px rgba(255,215,100,0.22),
+                0 0 120px 60px rgba(255,185,55,0.11),
+                0 0 260px 130px rgba(255,160,30,0.05) !important;
+        }
+
+        /* ── LIGHT CONE more visible ── */
+        .light-cone {
+            border-top: 280px solid rgba(255,210,100,0.055) !important;
+            filter: blur(2px);
+        }
+
     </style>
 </head>
 <body>
@@ -1391,14 +1618,6 @@ function initShift(){
     isGameRunning=true; isBlackout=false; power=100; hour=0; secondsPassed=0;
     goldenSpawnedThisNight = false;
 
-    // Apply hour skip bonus if player won minigame from previous night
-    if (localStorage.getItem('mg_skip_night_' + (currentNight - 1)) === '1'){
-        hour = 1; // skip to 1 AM
-        elHour.innerText = "1 AM";
-        ai.active = true;
-        localStorage.removeItem('mg_skip_night_' + (currentNight - 1)); // use once
-    }
-
     ai = {
         active:false, location:'cam1', lastLocation:'cam1', patience:100,
         creepProgress:0, state:'idle', attackTimer:0, doorWaitTimer:0, cooldownTimer:0,
@@ -1409,6 +1628,16 @@ function initShift(){
     leftTeleporterActive = false;
     if (leftTeleporterInterval){ clearInterval(leftTeleporterInterval); leftTeleporterInterval = null; }
     clearLeftTeleporterTimeouts();
+
+    // Apply bonuses from previous mini-game (after AI is fully reset)
+    // Apply energy bonus from previous mini-game win
+    const _mgBonus = localStorage.getItem('mg_bonus_night_' + currentNight);
+    if (_mgBonus){
+        power = Math.min(100, power + parseInt(_mgBonus));
+        elPower.innerText = 'Power left: ' + Math.max(0,Math.floor(power)) + '%';
+        localStorage.removeItem('mg_bonus_night_' + currentNight);
+    }
+    window._nightTotalHours = TOTAL_HOURS; // always 6 AM
 
     leftAnim.enabled = (currentNight >= 3);
     leftAnim.location = leftAnim.route[0];
@@ -1487,7 +1716,7 @@ function gameLoop(){
         if (leftTeleporterActive && hour !== 2){
             stopLeftTeleporter();
         }
-        if (hour >= TOTAL_HOURS) { winGame(); return; }
+        if (hour >= (window._nightTotalHours || TOTAL_HOURS)) { winGame(); return; }
     }
 
     if (currentNight >= 5 && hour === 3 && !goldenSpawnedThisNight){
@@ -2247,7 +2476,7 @@ function showMiniGame(afterNight, nextNight){
     mgActive = true;
     mgWon = false;
     mgPendingNight = nextNight;
-    mgType = afterNight === 1 ? 'snake' : afterNight === 2 ? 'tetris' : 'memory';
+    mgType = afterNight === 1 ? 'snake' : afterNight === 2 ? 'tetris' : 'tanks';
 
     const screen = document.getElementById('minigame-screen');
     screen.style.display = 'flex';
@@ -2256,19 +2485,22 @@ function showMiniGame(afterNight, nextNight){
 
     if (mgType === 'snake') startSnake();
     else if (mgType === 'tetris') startTetris();
-    else startMemory();
+    else startTanks();
 }
 
 function closeMiniGame(){
     mgActive = false;
     document.getElementById('minigame-screen').style.display = 'none';
-    if (mgWon) localStorage.setItem('mg_skip_night_' + (mgPendingNight - 1), '1');
-    // Save night progress then return to main menu
+    // Save bonus for next night if won
+    if (mgWon){
+        const bonusAmt = mgType === 'snake' ? '10' : mgType === 'tetris' ? '15' : '25';
+        localStorage.setItem('mg_bonus_night_' + mgPendingNight, bonusAmt);
+    }
+    // Advance night and go to menu (fresh shift)
     currentNight = mgPendingNight;
     localStorage.setItem('fnaf_night', currentNight);
     document.getElementById('win-screen').style.display = 'none';
     document.getElementById('game-screen').style.display = 'none';
-    // Show main menu with updated continue button
     const contBtn = document.getElementById('continue-btn');
     if (contBtn){ contBtn.style.display = 'block'; contBtn.innerText = 'CONTINUE SHIFT (NIGHT ' + currentNight + ')'; }
     document.getElementById('main-menu').style.display = 'flex';
@@ -2288,7 +2520,7 @@ function mgEndGame(won, msg){
 /* ========== SNAKE ========== */
 function startSnake(){
     document.getElementById('mg-title').innerText = 'SNAKE — NIGHT 1 BONUS';
-    document.getElementById('mg-desc').innerText = 'Eat 10 apples in 30 seconds to skip the first hour next night!';
+    document.getElementById('mg-desc').innerText = 'Eat 10 apples in 30 seconds to earn +10% power on Night 2!';
     const canvas = document.getElementById('mg-canvas');
     canvas.width = 300; canvas.height = 300;
     const ctx = canvas.getContext('2d');
@@ -2314,7 +2546,7 @@ function startSnake(){
         if (dead) return;
         timeLeft--;
         document.getElementById('mg-hud').innerText = `Apples: ${applesEaten}/10  Time: ${timeLeft}s`;
-        if (timeLeft <= 0 && !dead){ dead=true; clearInterval(window._mgTimerId); clearInterval(window._mgLoopId); mgEndGame(false, 'Time up! No hour skip.'); }
+        if (timeLeft <= 0 && !dead){ dead=true; clearInterval(window._mgTimerId); clearInterval(window._mgLoopId); mgEndGame(false, 'Time up! No bonus.'); }
     }, 1000);
 
     // Controls
@@ -2330,9 +2562,9 @@ function startSnake(){
         if (dead) return;
         dir = nextDir;
         const head = {x:(snake[0].x+dir.x+COLS)%COLS, y:(snake[0].y+dir.y+ROWS)%ROWS};
-        if (snake.some(s=>s.x===head.x&&s.y===head.y)){ dead=true; clearInterval(window._mgLoopId); clearInterval(window._mgTimerId); document.removeEventListener('keydown',onKey); mgEndGame(false,'You died! No hour skip.'); return; }
+        if (snake.some(s=>s.x===head.x&&s.y===head.y)){ dead=true; clearInterval(window._mgLoopId); clearInterval(window._mgTimerId); document.removeEventListener('keydown',onKey); mgEndGame(false,'You died! No bonus.'); return; }
         snake.unshift(head);
-        if (head.x===apple.x&&head.y===apple.y){ applesEaten++; document.getElementById('mg-hud').innerText=`Apples: ${applesEaten}/10  Time: ${timeLeft}s`; if(applesEaten>=10){ dead=true; clearInterval(window._mgLoopId); clearInterval(window._mgTimerId); document.removeEventListener('keydown',onKey); mgEndGame(true,'You got 10 apples! First hour skipped next night!'); return; } apple=randomApple(); } else { snake.pop(); }
+        if (head.x===apple.x&&head.y===apple.y){ applesEaten++; document.getElementById('mg-hud').innerText=`Apples: ${applesEaten}/10  Time: ${timeLeft}s`; if(applesEaten>=10){ dead=true; clearInterval(window._mgLoopId); clearInterval(window._mgTimerId); document.removeEventListener('keydown',onKey); mgEndGame(true, '+10% power bonus on Night 2!'); return; } apple=randomApple(); } else { snake.pop(); }
         // Draw
         ctx.fillStyle='#111'; ctx.fillRect(0,0,canvas.width,canvas.height);
         // grid
@@ -2349,7 +2581,7 @@ function startSnake(){
 /* ========== TETRIS ========== */
 function startTetris(){
     document.getElementById('mg-title').innerText = 'TETRIS — NIGHT 2 BONUS';
-    document.getElementById('mg-desc').innerText = 'Score 400 points to skip the first hour next night!';
+    document.getElementById('mg-desc').innerText = 'Score 400 points in 40 seconds to earn +15% power on Night 3!';
     const TARGET = 400;
     const canvas = document.getElementById('mg-canvas');
     canvas.width = 200; canvas.height = 400;
@@ -2376,7 +2608,14 @@ function startTetris(){
     function clearLines(){ let cleared=0; board=board.filter(r=>{ if(r.every(c=>c)){cleared++;return false;} return true; }); while(board.length<ROWS) board.unshift(Array(COLS).fill(0)); score+=cleared*100; }
     function rotate(s){ return s[0].map((_,i)=>s.map(r=>r[i])).reverse(); }
 
-    document.getElementById('mg-hud').innerText = `Score: 0 / ${TARGET}`;
+    document.getElementById('mg-hud').innerText = `Score: 0 / ${TARGET}  Time: 40s`;
+    let tetrisTime = 40;
+    window._mgTimerId = setInterval(()=>{
+        if(dead) return;
+        tetrisTime--;
+        document.getElementById('mg-hud').innerText = `Score: ${score} / ${TARGET}  Time: ${tetrisTime}s`;
+        if(tetrisTime <= 0){ dead=true; clearInterval(window._mgTimerId); clearInterval(window._mgLoopId); document.removeEventListener('keydown',onKey); mgEndGame(false, `Time up! Score ${score}. Need ${TARGET}.`); }
+    }, 1000);
 
     function draw(){
         ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -2391,10 +2630,10 @@ function startTetris(){
         if(dead) return;
         if(valid(cur,0,1)){ cur.y++; } else {
             place(cur); clearLines();
-            document.getElementById('mg-hud').innerText=`Score: ${score} / ${TARGET}`;
-            if(score>=TARGET){ dead=true; clearInterval(window._mgLoopId); mgEndGame(true,`Score ${score}! First hour skipped next night!`); return; }
+            document.getElementById('mg-hud').innerText=`Score: ${score} / ${TARGET}  Time: ${tetrisTime}s`;
+            if(score>=TARGET){ dead=true; clearInterval(window._mgLoopId); mgEndGame(true, `Score ${score}! +15% power on Night 3!`); return; }
             cur=next; next=randPiece();
-            if(!valid(cur)){dead=true;clearInterval(window._mgLoopId);mgEndGame(false,`Score ${score}. Need ${TARGET}. No skip.`);return;}
+            if(!valid(cur)){dead=true;clearInterval(window._mgLoopId);mgEndGame(false,`Score ${score}. Need ${TARGET}. No bonus.`);return;}
         }
         draw();
     }
@@ -2412,56 +2651,160 @@ function startTetris(){
     draw();
 }
 
-/* ========== MEMORY MATCH (night 3) ========== */
-function startMemory(){
-    document.getElementById('mg-title').innerText = 'MEMORY — NIGHT 3 BONUS';
-    document.getElementById('mg-desc').innerText = 'Match all 8 pairs in 60 seconds to skip the first hour next night!';
+/* ========== TANKS (night 3) ========== */
+function startTanks(){
+    document.getElementById('mg-title').innerText = 'TANKS — NIGHT 3 BONUS';
+    document.getElementById('mg-desc').innerText = 'Kill 5 enemy tanks in 12.5 seconds to earn +25% power on Night 4!\nArrow keys / WASD to move. SPACE to shoot.';
     const canvas = document.getElementById('mg-canvas');
-    canvas.width=300;canvas.height=300;
+    canvas.width=300; canvas.height=300;
     const ctx=canvas.getContext('2d');
-    const EMOJIS=['★','♦','♠','♥','☀','☁','☂','♫'];
-    let cards=[...EMOJIS,...EMOJIS].sort(()=>Math.random()-0.5).map((e,i)=>({emoji:e,x:(i%4)*72+6,y:Math.floor(i/4)*72+6,flipped:false,matched:false}));
-    let first=null,second=null,lock=false,matched=0,timeLeft=60;
+    document.getElementById('mg-hud').innerText='Kills: 0/5  Time: 12.5s';
 
-    document.getElementById('mg-hud').innerText=`Pairs: 0/8  Time: 60s`;
+    let done=false, kills=0, timeLeft=25; // 25 half-second ticks = 12.5s
+    const NEED=5;
 
-    function draw(){
-        ctx.fillStyle='#111';ctx.fillRect(0,0,canvas.width,canvas.height);
-        cards.forEach(c=>{
-            if(c.matched){ ctx.fillStyle='#040'; ctx.fillRect(c.x,c.y,66,66); ctx.fillStyle='#0f0'; ctx.font='32px serif'; ctx.textAlign='center'; ctx.fillText(c.emoji,c.x+33,c.y+42); }
-            else if(c.flipped){ ctx.fillStyle='#224'; ctx.fillRect(c.x,c.y,66,66); ctx.fillStyle='#fff'; ctx.font='32px serif'; ctx.textAlign='center'; ctx.fillText(c.emoji,c.x+33,c.y+42); }
-            else { ctx.fillStyle='#333'; ctx.fillRect(c.x,c.y,66,66); ctx.strokeStyle='#555'; ctx.strokeRect(c.x,c.y,66,66); ctx.fillStyle='#888'; ctx.font='28px serif'; ctx.textAlign='center'; ctx.fillText('?',c.x+33,c.y+44); }
-        });
+    // Player tank
+    let player={x:150,y:250,angle:270,speed:0,bullets:[]};
+    // Enemy tanks
+    let enemies=[];
+    function spawnEnemy(){
+        return {
+            x:20+Math.random()*260,
+            y:20+Math.random()*100,
+            angle:Math.floor(Math.random()*4)*90,
+            moveTimer:0,
+            shootTimer:40+Math.floor(Math.random()*40),
+            bullets:[]
+        };
+    }
+    for(let i=0;i<3;i++) enemies.push(spawnEnemy());
+
+    const keys={};
+    function onKey(e){ keys[e.code]=e.type==='keydown'; e.preventDefault(); }
+    document.addEventListener('keydown',onKey);
+    document.addEventListener('keyup',onKey);
+
+    function drawTank(x,y,angle,color){
+        ctx.save();
+        ctx.translate(x,y);
+        ctx.rotate(angle*Math.PI/180);
+        ctx.fillStyle=color;
+        ctx.fillRect(-10,-12,20,24);
+        ctx.fillStyle='#888';
+        ctx.fillRect(-5,-15,10,8);
+        ctx.fillStyle='#666';
+        ctx.fillRect(-2,-22,4,12);
+        ctx.restore();
     }
 
-    canvas.onclick=function(e){
-        if(lock) return;
-        const rect=canvas.getBoundingClientRect();
-        const mx=(e.clientX-rect.left)*(canvas.width/rect.width);
-        const my=(e.clientY-rect.top)*(canvas.height/rect.height);
-        const card=cards.find(c=>!c.flipped&&!c.matched&&mx>=c.x&&mx<=c.x+66&&my>=c.y&&my<=c.y+66);
-        if(!card) return;
-        card.flipped=true;
-        if(!first){first=card;}
-        else if(!second&&card!==first){
-            second=card;lock=true;
-            setTimeout(()=>{
-                if(first.emoji===second.emoji){first.matched=second.matched=true;matched++;document.getElementById('mg-hud').innerText=`Pairs: ${matched}/8  Time: ${timeLeft}s`;if(matched===8){clearInterval(window._mgTimerId);canvas.onclick=null;mgEndGame(true,'All pairs matched! First hour skipped!');}}
-                else{first.flipped=second.flipped=false;}
-                first=null;second=null;lock=false;draw();
-            },700);
-        }
-        draw();
-    };
+    function drawBullet(x,y,color){
+        ctx.fillStyle=color;
+        ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+    }
+
+    function rectsOverlap(ax,ay,bx,by,r){
+        return Math.hypot(ax-bx,ay-by)<r;
+    }
 
     window._mgTimerId=setInterval(()=>{
+        if(done) return;
         timeLeft--;
-        document.getElementById('mg-hud').innerText=`Pairs: ${matched}/8  Time: ${timeLeft}s`;
-        if(timeLeft<=0){clearInterval(window._mgTimerId);canvas.onclick=null;mgEndGame(false,`Time up! ${matched}/8 pairs. No skip.`);}
-    },1000);
-    draw();
+        const displaySec=(timeLeft*0.5).toFixed(1);
+        document.getElementById('mg-hud').innerText='Kills: '+kills+'/'+NEED+'  Time: '+displaySec+'s';
+        if(timeLeft<=0){done=true;clearInterval(window._mgTimerId);clearInterval(window._mgLoopId);document.removeEventListener('keydown',onKey);document.removeEventListener('keyup',onKey);mgEndGame(false,'Time up! No bonus.');}
+    },500);
+
+    window._mgLoopId=setInterval(()=>{
+        if(done) return;
+
+        // Player movement
+        const spd=2;
+        if(keys['ArrowLeft']||keys['KeyA']) player.angle-=4;
+        if(keys['ArrowRight']||keys['KeyD']) player.angle+=4;
+        if(keys['ArrowUp']||keys['KeyW']){
+            player.x+=Math.cos((player.angle-90)*Math.PI/180)*spd;
+            player.y+=Math.sin((player.angle-90)*Math.PI/180)*spd;
+        }
+        if(keys['ArrowDown']||keys['KeyS']){
+            player.x-=Math.cos((player.angle-90)*Math.PI/180)*spd;
+            player.y-=Math.sin((player.angle-90)*Math.PI/180)*spd;
+        }
+        player.x=Math.max(12,Math.min(288,player.x));
+        player.y=Math.max(12,Math.min(288,player.y));
+
+        // Player shoot
+        if(keys['Space']){
+            keys['Space']=false;
+            player.bullets.push({
+                x:player.x+Math.cos((player.angle-90)*Math.PI/180)*14,
+                y:player.y+Math.sin((player.angle-90)*Math.PI/180)*14,
+                vx:Math.cos((player.angle-90)*Math.PI/180)*6,
+                vy:Math.sin((player.angle-90)*Math.PI/180)*6
+            });
+        }
+
+        // Move player bullets
+        player.bullets=player.bullets.filter(b=>{
+            b.x+=b.vx; b.y+=b.vy;
+            if(b.x<0||b.x>300||b.y<0||b.y>300) return false;
+            let hit=false;
+            enemies=enemies.filter(e=>{
+                if(!hit&&rectsOverlap(b.x,b.y,e.x,e.y,16)){
+                    hit=true; kills++;
+                    if(kills>=NEED){ done=true; clearInterval(window._mgTimerId); clearInterval(window._mgLoopId); document.removeEventListener('keydown',onKey); document.removeEventListener('keyup',onKey); mgEndGame(true, '+25% power bonus on Night 4!'); }
+                    else enemies.push(spawnEnemy());
+                    return false;
+                }
+                return true;
+            });
+            return !hit;
+        });
+
+        // Enemy AI + bullets
+        enemies.forEach(e=>{
+            e.moveTimer++;
+            if(e.moveTimer>30){ e.moveTimer=0; e.angle=(e.angle+[0,90,180,-90][Math.floor(Math.random()*4)])%360; }
+            e.x+=Math.cos((e.angle-90)*Math.PI/180)*0.8;
+            e.y+=Math.sin((e.angle-90)*Math.PI/180)*0.8;
+            e.x=Math.max(12,Math.min(288,e.x));
+            e.y=Math.max(12,Math.min(288,e.y));
+            e.shootTimer--;
+            if(e.shootTimer<=0){
+                e.shootTimer=50+Math.floor(Math.random()*40);
+                const ang=Math.atan2(player.y-e.y,player.x-e.x)*180/Math.PI+90;
+                e.bullets.push({x:e.x,y:e.y,vx:Math.cos((ang-90)*Math.PI/180)*4,vy:Math.sin((ang-90)*Math.PI/180)*4});
+            }
+            // Move enemy bullets
+            e.bullets=e.bullets.filter(b=>{
+                b.x+=b.vx; b.y+=b.vy;
+                if(b.x<0||b.x>300||b.y<0||b.y>300) return false;
+                if(rectsOverlap(b.x,b.y,player.x,player.y,14)){
+                    done=true; clearInterval(window._mgTimerId); clearInterval(window._mgLoopId); document.removeEventListener('keydown',onKey); document.removeEventListener('keyup',onKey); mgEndGame(false,'You were destroyed! No bonus.');
+                    return false;
+                }
+                return true;
+            });
+        });
+
+        // Draw
+        ctx.fillStyle='#1a1a0a';ctx.fillRect(0,0,300,300);
+        // Grid
+        ctx.strokeStyle='rgba(255,255,255,0.04)';
+        for(let i=0;i<300;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,300);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(300,i);ctx.stroke();}
+        // Draw enemies
+        enemies.forEach(e=>{
+            drawTank(e.x,e.y,e.angle,'#8B0000');
+            e.bullets.forEach(b=>drawBullet(b.x,b.y,'#f00'));
+        });
+        // Draw player
+        drawTank(player.x,player.y,player.angle,'#0a5c0a');
+        player.bullets.forEach(b=>drawBullet(b.x,b.y,'#0f0'));
+        // HUD
+        document.getElementById('mg-hud').innerText=`Kills: ${kills}/${NEED}  Time: ${timeLeft}s`;
+    },33);
 }
 </script>
 
 </body>
 </html>
+w
