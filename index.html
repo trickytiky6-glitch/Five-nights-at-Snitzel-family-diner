@@ -888,6 +888,30 @@
         #win-screen   { animation: screenFadeIn 0.5s ease; }
         @keyframes screenFadeIn { from { opacity:0; } to { opacity:1; } }
 
+        /* ── FNAF-STYLE NIGHT INTRO ANIMATION ── */
+        #night-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#000; z-index:300; }
+        #night-static-canvas { position:absolute; inset:0; pointer-events:none; opacity:0.18; }
+        #night-text { font-size:4rem; position:relative; z-index:2; letter-spacing:4px; text-shadow: 0 0 20px #fff, 0 0 40px rgba(255,255,255,0.4); }
+        .night-slash { position:absolute; background:#fff; opacity:0; pointer-events:none; }
+        @keyframes slashIn  { 0%{opacity:0.9;transform:scaleX(0)} 40%{opacity:0.7} 100%{opacity:0;transform:scaleX(1)} }
+        @keyframes slashOut { 0%{opacity:0.6} 100%{opacity:0;transform:translateX(120%)} }
+        @keyframes nightTextPop { 0%{opacity:0;transform:scale(1.4)} 30%{opacity:1;transform:scale(0.95)} 60%{transform:scale(1.02)} 100%{opacity:1;transform:scale(1)} }
+        .night-text-anim { animation: nightTextPop 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+        /* ── MINI-GAME COUNTDOWN ── */
+        #mg-countdown {
+            position:absolute; inset:0;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            background:#000; z-index:10;
+        }
+        #mg-countdown-num {
+            font-size:8rem; color:#ff0;
+            text-shadow: 0 0 30px #ff0, 0 0 60px rgba(255,200,0,0.5);
+            animation: countPop 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        #mg-countdown-label { font-size:0.8rem; color:#aaa; margin-top:10px; }
+        @keyframes countPop { from{transform:scale(1.6);opacity:0} to{transform:scale(1);opacity:1} }
+
         /* ── MINI-GAME screen ── */
         #minigame-screen { animation: mgPop 0.35s cubic-bezier(0.22,1,0.36,1); }
         @keyframes mgPop { from { opacity:0; transform:scale(0.94); } to { opacity:1; transform:scale(1); } }
@@ -920,6 +944,10 @@
     </div>
 
     <div id="night-screen" style="display:none;align-items:center;justify-content:center;flex-direction:column">
+        <canvas id="night-static-canvas"></canvas>
+        <div id="night-slash-1" class="night-slash" style="height:3px;width:60%;top:30%;left:-10%"></div>
+        <div id="night-slash-2" class="night-slash" style="height:2px;width:40%;top:55%;right:-10%"></div>
+        <div id="night-slash-3" class="night-slash" style="height:4px;width:30%;top:70%;left:20%"></div>
         <div id="night-text" style="font-size:4rem">NIGHT 1</div>
     </div>
 
@@ -1424,13 +1452,83 @@ function spawnPhantomThreeCams(){
     updatePhantomView();
 }
 
+function playNightSound(){
+    try {
+        const ns = document.getElementById('night-start-sound');
+        if (ns){ ns.currentTime=0; ns.volume=1.0; ns.play().catch(()=>{}); }
+    } catch(e){}
+}
+
+function runNightIntroAnimation(label, onDone){
+    const screen = document.getElementById('night-screen');
+    const nightText = document.getElementById('night-text');
+    const canvas = document.getElementById('night-static-canvas');
+    screen.style.display = 'flex';
+    nightText.innerText = label;
+    nightText.classList.remove('night-text-anim');
+
+    // Size canvas
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+
+    // Animate static noise for 5 seconds
+    let frame = 0;
+    let staticRaf;
+    function drawStatic(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        // Random white rectangles (FNAF static look)
+        const count = 18 + Math.floor(Math.random()*14);
+        for(let i=0;i<count;i++){
+            const x=Math.random()*canvas.width;
+            const y=Math.random()*canvas.height;
+            const w=10+Math.random()*120;
+            const h=1+Math.random()*6;
+            ctx.fillStyle='rgba(255,255,255,'+(0.05+Math.random()*0.18)+')';
+            ctx.fillRect(x,y,w,h);
+        }
+        // Occasional vertical flash
+        if(Math.random()<0.08){
+            ctx.fillStyle='rgba(255,255,255,0.06)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+        }
+        frame++;
+        staticRaf = requestAnimationFrame(drawStatic);
+    }
+    staticRaf = requestAnimationFrame(drawStatic);
+
+    // Animate slash lines
+    const slashes = ['night-slash-1','night-slash-2','night-slash-3'];
+    slashes.forEach((id,i)=>{
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.style.animation='none'; el.style.opacity='0';
+        setTimeout(()=>{
+            el.style.animation = `slashIn 0.4s ease-out ${i*0.12}s forwards`;
+        }, 200 + i*120);
+    });
+
+    // Pop in the text after a brief delay
+    setTimeout(()=>{
+        nightText.classList.add('night-text-anim');
+    }, 350);
+
+    // After 5 seconds, finish
+    setTimeout(()=>{
+        cancelAnimationFrame(staticRaf);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        screen.style.display = 'none';
+        slashes.forEach(id=>{ const el=document.getElementById(id); if(el){ el.style.animation='none'; el.style.opacity='0'; }});
+        onDone();
+    }, 5000);
+}
+
 function startGame(isNew){
+    try { const mm = document.getElementById('menu-music'); mm.pause(); mm.currentTime = 0; } catch(e){}
     if (isNew) currentNight = 1;
     localStorage.setItem('fnaf_night', currentNight);
     document.getElementById('main-menu').style.display='none';
-    document.getElementById('night-screen').style.display='flex';
-    document.getElementById('night-text').innerText=`NIGHT ${currentNight}`;
-    setTimeout(()=>{ document.getElementById('night-screen').style.display='none'; initShift(); },3000);
+    playNightSound();
+    runNightIntroAnimation('NIGHT ' + currentNight, ()=>{ initShift(); });
 }
 
 function scheduleHelperSpawns(){
@@ -1488,52 +1586,45 @@ function startLeftTeleporter(){
         }
         clearLeftTeleporterTimeouts();
 
-        // Step 1: on cam7
+        // Route: cam7 → cam2 → cam3 → left_door
+        // Invisible in doorway unless left light is flashed (handled in updateCameraView)
         leftAnim.location = 'cam7';
         updateCameraView();
 
-        // Step 2: move to cam2 (3-5s in)
-        const t1 = 3000 + Math.random() * 2000;
+        // Step 1: cam7 → cam2 (4-7s)
+        const t1 = 4000 + Math.random() * 3000;
         leftTeleporterTimeouts.push(setTimeout(()=>{
+            if (!isGameRunning || isBlackout) return;
             leftAnim.location = 'cam2';
-            leftAnim.justMoved = true;
-            setTimeout(()=>{ leftAnim.justMoved = false; }, 1500);
             updateCameraView();
         }, t1));
 
-        // Step 3: peek at cam3 or cam5 briefly (7-10s in)
-        const t2 = t1 + 4000 + Math.random() * 3000;
+        // Step 2: cam2 → cam3 (3-5s later)
+        const t2 = t1 + 3000 + Math.random() * 2000;
         leftTeleporterTimeouts.push(setTimeout(()=>{
-            leftAnim.location = Math.random() < 0.6 ? 'cam3' : 'cam5';
-            leftAnim.justMoved = true;
-            setTimeout(()=>{ leftAnim.justMoved = false; }, 1500);
+            if (!isGameRunning || isBlackout) return;
+            leftAnim.location = 'cam3';
             updateCameraView();
         }, t2));
 
-        // Step 4: back to cam2 briefly (11-13s in)
-        const t3 = t2 + 3000 + Math.random() * 2000;
+        // Step 3: cam3 → left_door (2-4s later)
+        const t3 = t2 + 2000 + Math.random() * 2000;
         leftTeleporterTimeouts.push(setTimeout(()=>{
-            leftAnim.location = 'cam2';
-            updateCameraView();
-        }, t3));
-
-        // Step 5: arrive at left_door (14-16s in)
-        const t4 = t3 + 2000 + Math.random() * 2000;
-        leftTeleporterTimeouts.push(setTimeout(()=>{
+            if (!isGameRunning || isBlackout) return;
             leftAnim.location = 'left_door';
             updateCameraView();
 
             if (doors.left){
-                // blocked — return to cam7 after short pause
+                // Blocked — retreat to cam7
                 leftAnim.attackTimeout = setTimeout(()=>{
                     leftAnim.location = 'cam7';
                     updateCameraView();
                 }, 1000);
             } else {
-                // open door — 5s kill timer
+                // Door open — 5s to close it or die
                 if (leftAnim.attackTimeout){ clearTimeout(leftAnim.attackTimeout); leftAnim.attackTimeout = null; }
                 leftAnim.attackTimeout = setTimeout(()=>{
-                    if (!doors.left){
+                    if (!doors.left && isGameRunning){
                         triggerJumpscare('leftAnim');
                     } else {
                         leftAnim.location = 'cam7';
@@ -1541,16 +1632,16 @@ function startLeftTeleporter(){
                     }
                 }, 5000);
             }
-        }, t4));
+        }, t3));
 
-        // Step 6: after full cycle, reset to cam7 for next loop
-        const t5 = t4 + 7000;
+        // Reset to cam7 after full cycle
+        const resetDelay = t3 + 7000;
         leftTeleporterTimeouts.push(setTimeout(()=>{
             if (isGameRunning && !isBlackout && leftAnim.location !== 'left_door'){
                 leftAnim.location = 'cam7';
                 updateCameraView();
             }
-        }, t5));
+        }, resetDelay));
     }
 
     runSequence();
@@ -1561,7 +1652,7 @@ function startLeftTeleporter(){
             return;
         }
         runSequence();
-    }, 22000 + Math.random() * 4000);
+    }, 18000 + Math.random() * 6000);
 }
 
 function stopLeftTeleporter(){
@@ -1621,6 +1712,29 @@ function initShift(){
 
     isGameRunning=true; isBlackout=false; power=100; hour=0; secondsPassed=0;
     goldenSpawnedThisNight = false;
+
+    // ── FRESH STATE: reset all doors, lights, camera to default ──
+    doors = {left:false, right:false};
+    lights = {left:false, right:false};
+    isCamUp = false;
+
+    // Reset door UI
+    const doorL = document.getElementById('door-left');
+    const doorR = document.getElementById('door-right');
+    if (doorL) doorL.classList.remove('closed');
+    if (doorR) doorR.classList.remove('closed');
+    document.getElementById('btn-door-left').classList.remove('active');
+    document.getElementById('btn-door-right').classList.remove('active');
+
+    // Reset light UI
+    document.getElementById('light-overlay-left').classList.remove('on');
+    document.getElementById('light-overlay-right').classList.remove('on');
+    document.getElementById('btn-light-left').classList.remove('active');
+    document.getElementById('btn-light-right').classList.remove('active');
+
+    // Close monitor if open
+    elMonitor.classList.remove('active');
+    elBlindSpot.style.opacity = 0;
 
     ai = {
         active:false, location:'cam1', lastLocation:'cam1', patience:100,
@@ -2066,8 +2180,9 @@ function updateCameraView(){
     if (leftAnim.enabled){
         const leftLoc = leftAnim.location;
         // On cameras: show on cam7, cam2, cam3, cam5 (whichever he visits)
+        // Visible on cam7, cam2, cam3 (his route cams)
         const visibleOnCam = (leftLoc === activeCam) &&
-            (activeCam === 'cam7' || activeCam === 'cam2' || activeCam === 'cam3' || activeCam === 'cam5');
+            (activeCam === 'cam7' || activeCam === 'cam2' || activeCam === 'cam3');
 
         if (visibleOnCam){
             elLeftAnim.style.opacity = 0.95;
@@ -2076,7 +2191,6 @@ function updateCameraView(){
             if (activeCam === 'cam7'){ elLeftAnim.style.left='15%'; }
             else if (activeCam === 'cam2'){ elLeftAnim.style.left='5%'; }
             else if (activeCam === 'cam3'){ elLeftAnim.style.left='20%'; }
-            else if (activeCam === 'cam5'){ elLeftAnim.style.left='40%'; }
             // slide animation when just moved
             if (leftAnim.justMoved){ clearAnimClasses(elLeftAnim); elLeftAnim.classList.add('anim-slide-right'); }
         } else {
@@ -2291,11 +2405,9 @@ function backToMenu(){
 function launchCustomNight(){
     isCustomNight = true;
     document.getElementById('custom-screen').style.display='none';
-    // Set night to 5 so all features are enabled, then override difficulty via customSettings
     currentNight = 5;
-    document.getElementById('night-screen').style.display='flex';
-    document.getElementById('night-text').innerText='CUSTOM NIGHT';
-    setTimeout(()=>{ document.getElementById('night-screen').style.display='none'; initShift(); applyCustomSettings(); }, 3000);
+    playNightSound();
+    runNightIntroAnimation('CUSTOM NIGHT', ()=>{ initShift(); applyCustomSettings(); });
 }
 
 function applyCustomSettings(){
@@ -2457,13 +2569,21 @@ updateWindUI();
 
     <!-- ===== MINI-GAME SCREEN ===== -->
     <div id="minigame-screen" style="display:none;position:fixed;inset:0;background:#000;z-index:500000;flex-direction:column;align-items:center;justify-content:center">
-        <div id="mg-title" style="font-size:1.2rem;color:#ff0;margin-bottom:10px"></div>
+        <div id="mg-countdown" style="display:none">
+            <div id="mg-countdown-num">3</div>
+            <div id="mg-countdown-label">GET READY</div>
+        </div>
+        <div id="mg-title"  style="font-size:1.2rem;color:#ff0;margin-bottom:10px"></div>
         <div id="mg-desc" style="font-size:0.6rem;color:#aaa;margin-bottom:14px;text-align:center;max-width:420px;line-height:1.8"></div>
         <div id="mg-hud" style="font-size:0.7rem;color:#0f0;margin-bottom:8px"></div>
         <canvas id="mg-canvas" width="300" height="300" style="border:3px solid #fff;display:block;image-rendering:pixelated;background:#111"></canvas>
         <div id="mg-result" style="font-size:0.8rem;margin-top:12px;color:#fff;min-height:1.5em;text-align:center"></div>
         <button id="mg-close-btn" class="menu-btn" style="display:none;margin-top:14px;font-size:0.7rem" onclick="closeMiniGame()">BACK TO MENU</button>
     </div>
+    <audio id="night-start-sound"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/night-start-fnaf-3.mp3" type="audio/mpeg"></audio>
+    <audio id="mg-music-snake"  loop><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/Pixelated_Onslaught.mp3"  type="audio/mpeg"></audio>
+    <audio id="mg-music-tetris" loop><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/Pixel_Pursuit.mp3"         type="audio/mpeg"></audio>
+    <audio id="mg-music-tanks"  loop><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/Pixel_Pursuit%20(1).mp3"  type="audio/mpeg"></audio>
 
 <script>
 /* ===== MINI-GAME SYSTEM ===== */
@@ -2489,13 +2609,57 @@ function showMiniGame(afterNight, nextNight){
     document.getElementById('mg-result').innerText = '';
     document.getElementById('mg-close-btn').style.display = 'none';
 
-    if (mgType === 'snake') startSnake();
-    else if (mgType === 'tetris') startTetris();
-    else startTanks();
+    // Show 5-second countdown before game
+    const cdEl = document.getElementById('mg-countdown');
+    const cdNum = document.getElementById('mg-countdown-num');
+    const cdLabel = document.getElementById('mg-countdown-label');
+    // Hide game UI during countdown
+    document.getElementById('mg-title').style.visibility = 'hidden';
+    document.getElementById('mg-desc').style.visibility = 'hidden';
+    document.getElementById('mg-hud').style.visibility = 'hidden';
+    document.getElementById('mg-canvas').style.visibility = 'hidden';
+    cdEl.style.display = 'flex';
+    let cdCount = 5;
+    cdNum.innerText = cdCount;
+    cdLabel.innerText = 'GET READY';
+    // Beep sound for countdown
+    function cdBeep(freq){ if(audioCtx){ try{ const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type='square'; o.frequency.value=freq; g.gain.setValueAtTime(0.18,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.18); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.18); }catch(e){} } }
+    cdBeep(440);
+    const cdInterval = setInterval(()=>{
+        cdCount--;
+        if(cdCount > 0){
+            cdNum.innerText = cdCount;
+            // Force re-trigger animation
+            cdNum.style.animation='none';
+            void cdNum.offsetWidth;
+            cdNum.style.animation='countPop 0.35s cubic-bezier(0.22,1,0.36,1)';
+            cdBeep(cdCount === 1 ? 880 : 440);
+        } else {
+            clearInterval(cdInterval);
+            cdNum.innerText = 'GO!';
+            cdNum.style.color = '#0f0';
+            cdNum.style.animation='none'; void cdNum.offsetWidth;
+            cdNum.style.animation='countPop 0.35s cubic-bezier(0.22,1,0.36,1)';
+            cdBeep(1100);
+            setTimeout(()=>{
+                cdEl.style.display = 'none';
+                cdNum.style.color = '#ff0';
+                // Show game UI
+                document.getElementById('mg-title').style.visibility = 'visible';
+                document.getElementById('mg-desc').style.visibility = 'visible';
+                document.getElementById('mg-hud').style.visibility = 'visible';
+                document.getElementById('mg-canvas').style.visibility = 'visible';
+                if (mgType === 'snake') startSnake();
+                else if (mgType === 'tetris') startTetris();
+                else startTanks();
+            }, 600);
+        }
+    }, 1000);
 }
 
 function closeMiniGame(){
     mgActive = false;
+    stopMgMusic();
     document.getElementById('minigame-screen').style.display = 'none';
     // Save bonus for next night if won
     if (mgWon){
@@ -2513,11 +2677,22 @@ function closeMiniGame(){
     try { const m = document.getElementById('menu-music'); m.currentTime=0; m.volume=0.8; m.play().catch(()=>{}); } catch(e){}
 }
 
+function stopMgMusic(){
+    ['mg-music-snake','mg-music-tetris','mg-music-tanks'].forEach(id=>{
+        try{ const a=document.getElementById(id); if(a){ a.pause(); a.currentTime=0; } }catch(e){}
+    });
+}
+function playMgMusic(id){
+    stopMgMusic();
+    try{ const a=document.getElementById(id); if(a){ a.volume=0.6; a.currentTime=0; a.play().catch(()=>{}); } }catch(e){}
+}
+
 function mgEndGame(won, msg){
     mgWon = won;
     // stop any running loops
     if (window._mgLoopId){ clearInterval(window._mgLoopId); window._mgLoopId = null; }
     if (window._mgTimerId){ clearInterval(window._mgTimerId); window._mgTimerId = null; }
+    stopMgMusic();
     document.getElementById('mg-result').innerText = (won ? '✓ ' : '✗ ') + msg;
     document.getElementById('mg-result').style.color = won ? '#0f0' : '#f44';
     document.getElementById('mg-close-btn').style.display = 'block';
@@ -2525,6 +2700,7 @@ function mgEndGame(won, msg){
 
 /* ========== SNAKE ========== */
 function startSnake(){
+    playMgMusic('mg-music-snake');
     document.getElementById('mg-title').innerText = 'SNAKE — NIGHT 1 BONUS';
     document.getElementById('mg-desc').innerText = 'Eat 10 apples in 30 seconds to earn +10% power on Night 2!';
     const canvas = document.getElementById('mg-canvas');
@@ -2586,6 +2762,7 @@ function startSnake(){
 
 /* ========== TETRIS ========== */
 function startTetris(){
+    playMgMusic('mg-music-tetris');
     document.getElementById('mg-title').innerText = 'TETRIS — NIGHT 2 BONUS';
     document.getElementById('mg-desc').innerText = 'Score 400 points in 40 seconds to earn +15% power on Night 3!';
     const TARGET = 400;
@@ -2659,6 +2836,7 @@ function startTetris(){
 
 /* ========== TANKS (night 3) ========== */
 function startTanks(){
+    playMgMusic('mg-music-tanks');
     document.getElementById('mg-title').innerText = 'TANKS — NIGHT 3 BONUS';
     document.getElementById('mg-desc').innerText = 'Kill 5 enemy tanks in 12.5 seconds to earn +25% power on Night 4!\nArrow keys / WASD to move. SPACE to shoot.';
     const canvas = document.getElementById('mg-canvas');
