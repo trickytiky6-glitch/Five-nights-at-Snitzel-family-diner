@@ -1129,6 +1129,10 @@
            style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:9999998;display:none;pointer-events:none;background:#000">
       <source src="https://raw.githubusercontent.com/trickytiky6-glitch/fivenigts/main/3aef75e3-0bcb-4d36-87c1-7a9bed03e0ed.mp4" type="video/mp4">
     </video>
+    <video id="puppet-jumpscare-video" preload="auto" playsinline webkit-playsinline
+           style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:9999999;display:none;pointer-events:none;background:#000">
+      <source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/grok-video-2f8a59a9-575f-44dd-a335-5925666e0f4b%20(1).mp4" type="video/mp4">
+    </video>
 
 <script>
 /* ====== MOUSE PARALLAX — LEFT/RIGHT OFFICE PAN ====== */
@@ -2208,7 +2212,9 @@ function triggerJumpscare(killerType){
     try { outSong.pause(); outSong.currentTime = 0; if (outSongTimeout) clearTimeout(outSongTimeout); } catch(e){}
     try { document.getElementById('bg-music').pause(); } catch(e){}
 
-    const jsVid = document.getElementById('jumpscare-video');
+    // Puppet gets its own special jumpscare video
+    const vidId = (killerType === 'puppet') ? 'puppet-jumpscare-video' : 'jumpscare-video';
+    const jsVid = document.getElementById(vidId);
     if (jsVid){
         jsVid.style.display = 'block';
         try { jsVid.currentTime = 0; } catch(e){}
@@ -2807,4 +2813,3 @@ function startTanks(){
 
 </body>
 </html>
-
