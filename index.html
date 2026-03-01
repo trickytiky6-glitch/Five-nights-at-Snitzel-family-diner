@@ -916,6 +916,23 @@
         #minigame-screen { animation: mgPop 0.35s cubic-bezier(0.22,1,0.36,1); }
         @keyframes mgPop { from { opacity:0; transform:scale(0.94); } to { opacity:1; transform:scale(1); } }
 
+        /* ── 6 AM ANIMATION SCREEN ── */
+        #sixam-screen {
+            position:fixed; inset:0; background:#000;
+            display:none; align-items:center; justify-content:center; flex-direction:column;
+            z-index:400000;
+        }
+        #sixam-time {
+            font-size:5rem; color:#fff; letter-spacing:6px;
+            text-shadow: 0 0 30px #fff, 0 0 60px rgba(255,255,200,0.4);
+        }
+        #sixam-sub { font-size:1rem; color:#aaa; margin-top:16px; letter-spacing:3px; }
+        @keyframes sixamFlicker {
+            0%,100%{opacity:1} 8%{opacity:0.2} 10%{opacity:0.9} 40%{opacity:1}
+            60%{opacity:0.85} 62%{opacity:1}
+        }
+        #sixam-time { animation: sixamFlicker 1.2s ease forwards; }
+
         /* ── CEILING LIGHT stronger glow ── */
         .ceiling-light::after {
             box-shadow:
@@ -1134,7 +1151,13 @@
       <source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-Burger-Family-Diner/main/0227(1).mp4" type="video/mp4">
     </video>
 
-    <div id="phantom-flash"><img id="phantom-flash-img" src="https://raw.githubusercontent.com/trickytiky6-glitch/fnaffloorandwall/main/Magic8ball-removebg-preview.png" alt="phantom"></div>
+    <!-- 6 AM screen -->
+    <div id="sixam-screen">
+        <div id="sixam-time">6 AM</div>
+        <div id="sixam-sub">YOU SURVIVED</div>
+    </div>
+
+    <div id="phantom-flash"><img id="phantom-flash-img"  src="https://raw.githubusercontent.com/trickytiky6-glitch/fnaffloorandwall/main/Magic8ball-removebg-preview.png" alt="phantom"></div>
 
     <audio id="helper-sound-1"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/fnaffloorandwall/main/5260216442216814052.ogg" type="audio/ogg"></audio>
     <audio id="helper-sound-2"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/fnaffloorandwall/main/5260216442216814055.ogg" type="audio/ogg"></audio>
@@ -1282,6 +1305,8 @@ let leftAnim = {
     breathDir: 1,
     breathAmount: 0
 };
+
+let leftAnimDoorSoundPlayed = false; // play 'anim in door' sound only once per visit
 
 /* teleporter control */
 let leftTeleporterStarted = false;
@@ -1531,6 +1556,19 @@ function startGame(isNew){
     runNightIntroAnimation('NIGHT ' + currentNight, ()=>{ initShift(); });
 }
 
+function scheduleAmbienceSounds(){
+    // Play hallway ambience 2-3 times at random moments during the night
+    const shiftMs = SECONDS_PER_HOUR * TOTAL_HOURS * 1000;
+    const count = 2 + Math.floor(Math.random() * 2); // 2 or 3
+    for(let i = 0; i < count; i++){
+        const delay = 15000 + Math.floor(Math.random() * (shiftMs - 20000));
+        setTimeout(()=>{
+            if(!isGameRunning || isBlackout) return;
+            try{ const a=document.getElementById('snd-ambience'); a.currentTime=0; a.volume=0.55; a.play().catch(()=>{}); }catch(e){}
+        }, delay);
+    }
+}
+
 function scheduleHelperSpawns(){
     helperScheduledTimeouts.forEach(id => clearTimeout(id));
     helperScheduledTimeouts = [];
@@ -1618,12 +1656,14 @@ function startLeftTeleporter(){
                 // Blocked — retreat to cam7
                 leftAnim.attackTimeout = setTimeout(()=>{
                     leftAnim.location = 'cam7';
+                    leftAnimDoorSoundPlayed = false;
                     updateCameraView();
                 }, 1000);
             } else {
                 // Door open — 5s to close it or die
                 if (leftAnim.attackTimeout){ clearTimeout(leftAnim.attackTimeout); leftAnim.attackTimeout = null; }
                 leftAnim.attackTimeout = setTimeout(()=>{
+                    leftAnimDoorSoundPlayed = false;
                     if (!doors.left && isGameRunning){
                         triggerJumpscare('leftAnim');
                     } else {
@@ -1709,6 +1749,7 @@ function initShift(){
 
     clearHelperScheduled();
     scheduleHelperSpawns();
+    scheduleAmbienceSounds();
 
     isGameRunning=true; isBlackout=false; power=100; hour=0; secondsPassed=0;
     goldenSpawnedThisNight = false;
@@ -1731,6 +1772,7 @@ function initShift(){
     document.getElementById('light-overlay-right').classList.remove('on');
     document.getElementById('btn-light-left').classList.remove('active');
     document.getElementById('btn-light-right').classList.remove('active');
+    try{ const ls=document.getElementById('snd-light'); ls.pause(); ls.currentTime=0; }catch(e){}
 
     // Close monitor if open
     elMonitor.classList.remove('active');
@@ -1757,6 +1799,7 @@ function initShift(){
     }
     window._nightTotalHours = TOTAL_HOURS; // always 6 AM
 
+    leftAnimDoorSoundPlayed = false;
     leftAnim.enabled = (currentNight >= 3);
     leftAnim.location = leftAnim.route[0];
     leftAnim.lastLocation = leftAnim.location;
@@ -1897,8 +1940,8 @@ function toggleDoor(side){
     doors[side] = !doors[side];
     const doorEl = document.getElementById(`door-${side}`);
     const btnEl = document.getElementById(`btn-door-${side}`);
-    if (doors[side]){ doorEl.classList.add('closed'); btnEl.classList.add('active'); playSound(200,'square',0.1); }
-    else { doorEl.classList.remove('closed'); btnEl.classList.remove('active'); playSound(300,'square',0.1); }
+    if (doors[side]){ doorEl.classList.add('closed'); btnEl.classList.add('active'); try{ const d=document.getElementById('snd-door'); d.currentTime=0; d.play().catch(()=>{}); }catch(e){} }
+    else { doorEl.classList.remove('closed'); btnEl.classList.remove('active'); }
     calculateUsage();
 
     if (side === 'left' && doors.left && leftAnim.location === 'left_door'){
@@ -1921,7 +1964,15 @@ function toggleLight(side){
     if (side==='right' && lights.right && ai.state==='at_right_door') elBlindSpot.style.opacity = 1;
     else elBlindSpot.style.opacity = 0;
 
-    if (lights.left || lights.right) playSound(150,'sawtooth',0.05);
+    // Light sound: loop while any light is on, stop when all off
+    try{
+        const ls = document.getElementById('snd-light');
+        if (lights.left || lights.right){
+            if (ls.paused){ ls.currentTime=0; ls.volume=0.5; ls.play().catch(()=>{}); }
+        } else {
+            ls.pause(); ls.currentTime=0;
+        }
+    }catch(e){}
     calculateUsage();
     updateCameraView();
 }
@@ -1937,7 +1988,8 @@ function toggleMonitor(){
         document.getElementById('btn-light-left').classList.remove('active');
         document.getElementById('btn-light-right').classList.remove('active');
         elBlindSpot.style.opacity = 0;
-        playSound(400,'sine',0.1);
+        try{ const ls=document.getElementById('snd-light'); ls.pause(); ls.currentTime=0; }catch(e){}
+        try{ const m=document.getElementById('snd-monitor'); m.currentTime=0; m.play().catch(()=>{}); }catch(e){}
         if (specialGolden.killTimeoutId){ clearTimeout(specialGolden.killTimeoutId); specialGolden.killTimeoutId = null; }
         if (goldenInOffice){ goldenInOffice = false; if (goldenOfficeEl) goldenOfficeEl.style.display = 'none'; }
         if (ai.state === 'in_office'){ triggerJumpscare(); return; }
@@ -1946,7 +1998,7 @@ function toggleMonitor(){
         if (specialGolden.killTimeoutId){ clearTimeout(specialGolden.killTimeoutId); specialGolden.killTimeoutId = null; specialGolden.shown = false; goldenInOffice = false; if (goldenOfficeEl) goldenOfficeEl.style.display = 'none'; }
         if (phantom.visible && phantom.locations.includes(activeCam)){ handlePhantomCloseWhileViewing(); }
         elMonitor.classList.remove('active');
-        playSound(300,'sine',0.1);
+        try{ const m=document.getElementById('snd-monitor'); m.currentTime=0; m.play().catch(()=>{}); }catch(e){}
         if (ai.state === 'in_office') triggerJumpscare();
     }
     updateWindUI();
@@ -2202,6 +2254,11 @@ function updateCameraView(){
             if (lights.left){
                 elNewGuyDoor.style.display = 'block';
                 elNewGuyDoor.style.backgroundImage = `url('${LEFT_ANIM_SPRITE}')`;
+                // Play sound once per visit
+                if (!leftAnimDoorSoundPlayed){
+                    leftAnimDoorSoundPlayed = true;
+                    try{ const s=document.getElementById('snd-anim-door'); s.currentTime=0; s.play().catch(()=>{}); }catch(e){}
+                }
             } else {
                 elNewGuyDoor.style.display = 'none';
             }
@@ -2438,7 +2495,6 @@ function winGame(){
     if (phantomMoveInt) { clearInterval(phantomMoveInt); phantomMoveInt = null; }
     stopLeftBreathing();
     document.getElementById('bg-music').pause();
-    playSound(400,'sine',1.0,3);
     helperScheduledTimeouts.forEach(id=>clearTimeout(id)); helperScheduledTimeouts=[];
 
     const wasCustom = isCustomNight;
@@ -2447,14 +2503,32 @@ function winGame(){
 
     if (!wasCustom){
         if (currentNight < 5){ currentNight++; localStorage.setItem('fnaf_night', currentNight); }
-        else { localStorage.setItem('fnaf_night', 5); } // keep at 5 so custom unlocked
+        else { localStorage.setItem('fnaf_night', 5); }
     }
 
     document.getElementById('game-screen').style.display='none';
 
+    // Show 6 AM animation first, then proceed
+    const sixamScreen = document.getElementById('sixam-screen');
+    sixamScreen.style.display = 'flex';
+    // Reset animation
+    const sixamTime = document.getElementById('sixam-time');
+    sixamTime.style.animation = 'none';
+    void sixamTime.offsetWidth;
+    sixamTime.style.animation = 'sixamFlicker 1.2s ease forwards';
+    // Play 6 AM sound
+    try{ const s=document.getElementById('snd-6am'); s.currentTime=0; s.volume=1.0; s.play().catch(()=>{}); }catch(e){}
+
+    // After 4 seconds, hide 6AM screen and proceed
+    setTimeout(()=>{
+        sixamScreen.style.display = 'none';
+        _winGameProceed(wasCustom);
+    }, 4000);
+}
+
+function _winGameProceed(wasCustom){
     // After nights 1, 2, or 3 — show minigame
     if (!wasCustom && currentNight >= 2 && currentNight <= 4){
-        // currentNight was already incremented above (e.g. beat night 1 → currentNight=2)
         const afterNight = currentNight - 1;
         if (afterNight <= 3){
             showMiniGame(afterNight, currentNight);
@@ -2465,11 +2539,9 @@ function winGame(){
     const winScreen = document.getElementById('win-screen');
     winScreen.style.display='flex';
 
-    // Show night label
     const label = document.getElementById('win-night-label');
     if (label) label.innerText = wasCustom ? 'CUSTOM NIGHT COMPLETE!' : `NIGHT ${currentNight - (currentNight>1?1:0)} COMPLETE`;
 
-    // Show custom night button only after all 5 nights done
     const savedNight = parseInt(localStorage.getItem('fnaf_night')) || 1;
     const customBtn = document.getElementById('custom-night-btn');
     if (customBtn && (savedNight >= 5 || wasCustom)) customBtn.style.display='block';
@@ -2581,6 +2653,12 @@ updateWindUI();
         <button id="mg-close-btn" class="menu-btn" style="display:none;margin-top:14px;font-size:0.7rem" onclick="closeMiniGame()">BACK TO MENU</button>
     </div>
     <audio id="night-start-sound"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/night-start-fnaf-3.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-monitor"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/fnaf-open-camera-sound.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-light" loop><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/fnaf-light-sound.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-ambience"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/fnaf-2-hallway-ambience.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-6am"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/five-nights-at-freddys-6-am.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-door"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/door-slamming-fnaf-1-sound-effects.mp3" type="audio/mpeg"></audio>
+    <audio id="snd-anim-door"><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/animatronic-in-door.mp3" type="audio/mpeg"></audio>
     <audio id="mg-music-snake"  loop><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/Pixelated_Onslaught.mp3"  type="audio/mpeg"></audio>
     <audio id="mg-music-tetris" loop><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/Pixel_Pursuit.mp3"         type="audio/mpeg"></audio>
     <audio id="mg-music-tanks"  loop><source src="https://raw.githubusercontent.com/trickytiky6-glitch/Five-nights-at-Snitzel-family-diner/main/Pixel_Pursuit%20(1).mp3"  type="audio/mpeg"></audio>
